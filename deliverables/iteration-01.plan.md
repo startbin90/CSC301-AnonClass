@@ -47,15 +47,42 @@ _This entire section is mandatory._
  * Feel free (but not obligated) to specify some/all tasks as user stories.
 
  Goal: 
- * Come up a general idea of what kind of problem is our product solving. 
- * Decide what software tools we are using to build our project. 
- * Decide what are the specific features of our product and what approach we are going to take in order to implement them.
- * 
+ * Each group member should get to know other members. 
+ 
+ * Come up an idea of what kind of problem is our product solving. What platform is it? What purpose does it serve, etc. The more specific our
+   our idea is, the better plan we can make based on it.
+   
+   (After some discussions, all team members agree to build a software that focuses on the problem that it is quite difficult for instructors to take attendance from students manually in a big lecture. We decided to build our software on the feature that can let students take attendance electronically. The specific approach is not yet discussed. Other features are still possible.)
+ 
+ * Decide what software tools we are using to build our project. For example, which tools do we use to build the backend and which to use
+   to build to frontend.
+ 
+ * Decide which features are we going to be the most focus on. What makes our product different	than any other similar products.
+ 
+ * Discuss how we can apply software design principles and OOP principles into the project.
+
+ * Know a bit more about design patterns. Think about which specific design patterns we can make use of and how to implement those.
+ 
+ * Give a proper name to the software.
+
+ Tasks:
+ * Each group member should give his own idea of this project. After discussion, we should be able to have an idea that everybody agrees with. 
+ 
+ * Understand each other's background. Make sure coChoose software tools which most of the group members are familiar with, and they must be
+   able to achieve our project. If this is not possible, we need to figure out what we need to learn.
+ 
+ * Make good use of all ideas during the brainstorming session. For example, if some ideas were voted down during discussion, we can still use
+   them as some extra features.
+
+ * Each person should review software design patterns, principles and OOP principles. 
+
 
 #### Artifacts
 
 List/describe the artifacts you will produce in order to present your project idea.
-
+ * record every meeting ever happened. Record the main breakthrough we make after the discussion. Also record the members who attends and who 
+   does not. This helps us keep track of who are the most involved and who are the least involved.
+ 
  * Artifacts can be text, code, images, videos, interactive mock-ups and/or any other useful artifact you can think of.
  * Make sure to explain the purpose of each artifact (i.e. Why is it on your to-do list? Why is it useful for your team?)
  * Be concise, yet precise.         
