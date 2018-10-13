@@ -1,4 +1,4 @@
-# YOUR PRODUCT/TEAM NAME
+# AnonClass
 
  > _Note:_ This document is meant to be written during (or shortly after) your initial planning meeting.     
  > It does not really make sense for you to edit this document much (if at all) while working on the project - Instead, at the end of the planning phase, you can refer back to this document and decide which parts of your plan you are happy with and which parts you would like to change.
@@ -6,8 +6,8 @@
 
 ## Iteration 01
 
- * Start date: FILL IN THE DATE WHEN YOU HAD YOUR FIRST TEAM PLANNING MEETING
- * End date: FILL IN THE DATE WHEN YOU ARE PLANNING TO HAVE YOUR REVIEW MEETING
+ * Start date: September 24
+ * End date: October 8
 
 ## Process
 
@@ -42,10 +42,6 @@ _This entire section is mandatory._
 
 #### Goals and tasks
 
- * Describe your goals for this iteration and the tasks that you will have to complete in order to achieve these goals.
- * Order the items from most to least important.
- * Feel free (but not obligated) to specify some/all tasks as user stories.
-
  Goal: 
  * Each group member should get to know other members. 
  
@@ -75,9 +71,6 @@ _This entire section is mandatory._
 #### Artifacts
 
 List/describe the artifacts you will produce in order to present your project idea.
- * record every meeting ever happened. Record the main breakthrough we make after the discussion. Also record the members who attends and who does not. This helps us keep track of who are the most involved and who are the least involved.
- 
- * Artifacts can be text, code, images, videos, interactive mock-ups and/or any other useful artifact you can think of.
- * Make sure to explain the purpose of each artifact (i.e. Why is it on your to-do list? Why is it useful for your team?)
- * Be concise, yet precise.         
-   For example: "Build the website" is not precise at all, but "Build a static home page and upload it somewhere, so that it is publicly accessible" is much clearer.
+ * Record every meeting ever happened. Record the main breakthrough we make after the discussion. Also record the members who attends and who does not. This helps us keep track of who are the most involved and who are the least involved.
+ * Created a Wechat group for us to discuss project ideas and to plan future meetings
+ * Created Google doc which allows us to operate on a shared file at the same time
