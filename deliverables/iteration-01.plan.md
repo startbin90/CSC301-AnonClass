@@ -76,7 +76,10 @@ _This entire section is mandatory._
 
 List/describe the artifacts you will produce in order to present your project idea.
  * record every meeting ever happened. Record the main breakthrough we make after the discussion. Also record the members who attends and who does not. This helps us keep track of who are the most involved and who are the least involved.
- 
+ * User stories
+ ** User story #1: As Kate(a student), I want to ask questions in ECO100 class which has a capacity of 500, so that I can learn well in this class.
+ ** User story #2: As Sam(a teaching assistant of BIO130), I want to clear the confusion about the tons of terms, so that I can help the students to get more from the class.
+ ** User story #3: As Joseph(a instructor of MAT236), I don’t want to be interrupted when I deliver the part of proof, but I still want the students can get problems solved in class.
  * Artifacts can be text, code, images, videos, interactive mock-ups and/or any other useful artifact you can think of.
  * Make sure to explain the purpose of each artifact (i.e. Why is it on your to-do list? Why is it useful for your team?)
  * Be concise, yet precise.         
