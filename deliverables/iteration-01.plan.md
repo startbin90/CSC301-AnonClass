@@ -71,6 +71,9 @@ _This entire section is mandatory._
 #### Artifacts
 
 List/describe the artifacts you will produce in order to present your project idea.
+
  * Record every meeting ever happened. Record the main breakthrough we make after the discussion. Also record the members who attends and who does not. This helps us keep track of who are the most involved and who are the least involved.
  * Created a Wechat group for us to discuss project ideas and to plan future meetings
  * Created Google doc which allows us to operate on a shared file at the same time
+ * Making a XML Diagram for Deliverable 1. Here is the link: https://go.gliffy.com/go/share/s0wg4y9w6x2diduc3trs
+
