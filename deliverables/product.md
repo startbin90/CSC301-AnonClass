@@ -35,19 +35,12 @@ On the other hand, professor B doesn't like to be interrupted during the lecture
 #### Q3: Why would your users choose your product? What are they using today to solve their problem/need?
 
 The users now use the piazza as the Q&A tool where the students and teaching staff ask questions, answers, and explore 24/7.  Based on this feature, students discuss topics mostly about exams and assignments. However, the users still need a real time tool for them to ask questions about the lecture in class and get an instant answer to clear up the confusions, so that they can catch the instructors and get a better understanding of the lecture. For the teaching stuff, it is always hard for them to answer all the questions in class due to the time limitation. 
+Our product also provide features to enhance the in class interaction such as the attendace-taking and students reponse function.
 the benefits of the product:
-Improve the quality of teaching and learning
-Provide convenient and effective way to clear up confusions
-Provide the teaching staff with information: to what extent the students understand the lecture, whether the students have sufficient background knowledge and etc. These information can help the teaching staff to adjust the teaching material and then deliver a better lecture.
-
- * Short (1 - 2 min' read max)
- * We want you to "connect the dots" for us - Why does your product (as described in your answer to Q1) fits the needs of your users (as described in your answer to Q2)?
- * Explain the benefits of your product explicitly & clearly. For example:
-    * Save users time (how much?)
-    * Allow users to discover new information (which information? And, why couldn't they discover it before?)
-    * Provide users with more accurate and/or informative data (what kind of data? Why is it useful to them?)
-
-
+1. Improve the quality of teaching and learning
+2. Provide convenient and effective way to clear up confusions
+3. Provide the teaching staff with information: to what extent the students understand the lecture, whether the students have sufficient background knowledge and etc. These information can help the teaching staff to adjust the teaching material and then deliver a better lecture.
+4. Provide the attendance information to the teaching stuff.
 ----
 
 ### Highlights
