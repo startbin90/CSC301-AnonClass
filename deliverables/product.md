@@ -9,6 +9,7 @@ We plan to build a teaching staff and students in-class interaction software. Th
 #### Q2: Who are your target users?
 
 Our target users are the teaching staff and students. 
+
 Elliot is a shy student who has a lot of questions, but never speaks in the classroom. Everytime he comes up with a question at class, he has to wait for the class to end and post this question on Piazza. With this app, Elliot can get the answer immediately in class.
 
 Professor IhaveAnswers is a very outgoing person, and he wants to answer students' questions immediately. With this app, he is able to know which part of the class confuses the students and answer them.
