@@ -1,8 +1,15 @@
+package baseFunctions;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class User {
     private String email;
     private String UTORid;
     private String password;
     private Boolean isTeacher;
+
+    Set<Course> courses = new HashSet<>();
 
     public User(String email, String UTORid, String password) {
         this.email = email;
@@ -13,6 +20,10 @@ public class User {
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public void addCourse(Course course) {
+        courses.add(course);
     }
 
     @Override
