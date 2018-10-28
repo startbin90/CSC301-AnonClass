@@ -1,9 +1,10 @@
-package baseFunctions;
+package edu.toronto.csc301.anonclass.util;
 
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Map;
 
 /* Pass data between Android app and server
 */
@@ -30,7 +31,7 @@ public class PassingData {
         StringBuilder info = new StringBuilder();
         info.append("Sign up\n");
 
-        JSONObject obj = new JSONObject(newUser);
+        JSONObject obj = new JSONObject((Map)newUser);
 
         BufferedReader in = passing(info.toString());
         if (in != null) {
