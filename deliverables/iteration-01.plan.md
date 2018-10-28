@@ -34,7 +34,6 @@ List/describe the artifacts you will produce in order to organize your team.
 
 ## Product
 
-_This entire section is mandatory._
 
 #### Goals and tasks
 
