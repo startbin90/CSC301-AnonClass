@@ -1,0 +1,15 @@
+DB information
+
+********************************************************
+*  Endpoint                                            *
+*  anonclass.cszu4qtoxymw.us-east-1.rds.amazonaws.com  *
+*                                                      *
+*  Host                                                *
+*  5432                                                *
+*                                                      *
+*  Username                                            *
+*  A27F8705CC93F2A4EB6DAD33EECE8BDF                    *
+*                                                      *
+*  Password                                            *
+*  AA19A7C000CE3224021231312FF2E95F                    *
+********************************************************
