@@ -1,9 +1,5 @@
 # AnonClass
 
- > _Note:_ This document is meant to be written during (or shortly after) your initial planning meeting.     
- > It does not really make sense for you to edit this document much (if at all) while working on the project - Instead, at the end of the planning phase, you can refer back to this document and decide which parts of your plan you are happy with and which parts you would like to change.
-
-
 ## Iteration 01
 
  * Start date: September 24
@@ -38,7 +34,6 @@ List/describe the artifacts you will produce in order to organize your team.
 
 ## Product
 
-_This entire section is mandatory._
 
 #### Goals and tasks
 
@@ -70,7 +65,6 @@ _This entire section is mandatory._
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to present your project idea.
 * Record every meeting ever happened. Record the main breakthrough we make after the discussion. Also record the members who attends and who does not. This helps us keep track of who are the most involved and who are the least involved.
  * Created a Wechat group for us to discuss project ideas and to plan future meetings
  * Created Google doc which allows us to operate on a shared file at the same time
