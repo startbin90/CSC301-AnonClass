@@ -1,5 +1,7 @@
 package baseFunctions;
 
+import org.json.JSONObject;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -12,7 +14,7 @@ public class PassingData {
 
     private Socket socket;
 
-    public PassingData(){
+    public PassingData() {
         try {
             this.socket = new Socket(host, portNumber);
         } catch (IOException e) {
@@ -22,15 +24,18 @@ public class PassingData {
     }
 
     //return 1 if success, -1 if failed
-    public int SignUp(String email, String password) {
-        User newUser = new User(email, password);
+    public int SignUp(String email, String UTORid, String password,
+                      String firstName, String lastName, boolean isStudent) {
+        User newUser = new User(email, UTORid, password, firstName, lastName, isStudent);
         StringBuilder info = new StringBuilder();
         info.append("Sign up\n");
-        info.append(newUser.toString());
+
+        JSONObject obj = new JSONObject(newUser);
 
         BufferedReader in = passing(info.toString());
         if (in != null) {
             try {
+
                 return Integer.parseInt(in.readLine());
             } catch (IOException e) {
                 return -1;

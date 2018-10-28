@@ -1,6 +1,7 @@
-package main;
+package Server;
+import org.json.JSONObject;
+
 import java.io.*;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.sql.*;
 public class MyRunnable implements Runnable {
@@ -20,22 +21,18 @@ public class MyRunnable implements Runnable {
             db.connectDB("");
             String request = in.readLine();
             if (request.equals("Sign up")) {
-                String email = in.readLine();
-                String psw = in.readLine();
-                if (db.signup(email, psw)) {
-                    out.write(1);
+                String info = in.readLine();
+                JSONObject obj = new JSONObject(info);
+                if (db.signup(obj)) {
+                    out.write("true");
                 } else {
-                    out.write(-1);
+                    out.write("false");
                 }
 
             } else if (request.equals("Log in")) {
-                String email = in.readLine();
-                String psw = in.readLine();
-                if (db.login(email, psw)) {
-                    out.write(1);
-                } else {
-                    out.write(-1);
-                }
+                String info = in.readLine();
+                JSONObject obj = new JSONObject(info);
+
             }
             db.disconnectDB();
         } catch(IOException e) {
