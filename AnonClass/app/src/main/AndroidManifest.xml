@@ -25,7 +25,8 @@
         </activity>
         <activity
             android:name=".AnonClassActivity"
-            android:label="@string/title_activity_anon_class"></activity>
+            android:label="@string/title_activity_anon_class" />
+        <activity android:name=".registerActivity"></activity>
     </application>
 
 </manifest>
