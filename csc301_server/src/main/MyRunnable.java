@@ -1,7 +1,5 @@
 package main;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.sql.*;
@@ -17,16 +15,32 @@ public class MyRunnable implements Runnable {
     public void run() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
             AnnonclassDataBase db = new AnnonclassDataBase(connection);
             db.connectDB("");
             String request = in.readLine();
-            if (request == "Sign up") {
+            if (request.equals("Sign up")) {
                 String email = in.readLine();
                 String psw = in.readLine();
-                db.signup(email, psw);
+                if (db.signup(email, psw)) {
+                    out.write(1);
+                } else {
+                    out.write(-1);
+                }
+
+            } else if (request.equals("Log in")) {
+                String email = in.readLine();
+                String psw = in.readLine();
+                if (db.login(email, psw)) {
+                    out.write(1);
+                } else {
+                    out.write(-1);
+                }
             }
+            db.disconnectDB();
         } catch(IOException e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
