@@ -1,6 +1,5 @@
-package main;
+package Server;
 import java.io.*;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.sql.*;
 public class MyRunnable implements Runnable {
