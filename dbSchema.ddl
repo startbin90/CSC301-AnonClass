@@ -8,8 +8,7 @@ create table user(
 	utorid char(8) unique,
 	firstName varchar(10) not null,
 	lastName varchar(10) not null,
-	studentFlag boolean not null
-
+	studentFlag boolean not null	
 );
 
 create table course_user(
@@ -22,9 +21,12 @@ create table course_user(
 
 create table course_section(
   id int auto_increment key,
-	course_name varchar(40),
+ 	course_name varchar(40),
   section_number int,
-  teacher_id int,
+  instructor_email varchar(50),
+  instructor_name varchar(20),
+  location varchar(20)
   CONSTRAINT course_section UNIQUE (course_name, section_number)
+  FOREIGN KEY(instructor_email) REFERENCES user(email)
 );
 
