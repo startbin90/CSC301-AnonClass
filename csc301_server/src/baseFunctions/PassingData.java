@@ -1,13 +1,24 @@
+package baseFunctions;
+
 import java.io.*;
 import java.net.Socket;
 
 /* Pass data between Android app and server
 */
 public class PassingData {
+
+    private String host = "whatever";
+    private int portNumber = 30000;
+
     private Socket socket;
 
-    public PassingData(Socket socket){
-        this.socket = socket;
+    public PassingData(){
+        try {
+            this.socket = new Socket(host, portNumber);
+        } catch (IOException e) {
+            socket = null;
+        }
+
     }
 
     //return 1 if success, -1 if failed
