@@ -84,7 +84,7 @@ public class AnnonclassDataBase {
                     return null;
                 } else {
                     PreparedStatement courses = connection.prepareStatement("select course_user.course_name, " +
-                            "course_user.section_number, course_section.teacher_id from user, " +
+                            "course_user.section_number, course_section.instructor_name, course_section.location from user, " +
                             "course_user, course_section where user.email = ? and user.email = course_user.user_email " +
                             "and course_user.course_name = course_section.course_name and course_user.section_number " +
                             "= course_section.section_number;");
@@ -93,9 +93,13 @@ public class AnnonclassDataBase {
                     while(re.next()) {
                         JSONObject course = new JSONObject();
                         course.put("courseCode", re.getString(1));
-                        course.put("sectionCode", re.getInt(2));
+                        course.put("sectionCode", re.getString(2));
+                        course.put("instructor", re.getString(3));
+                        course.put("location", re.getString(4));
+                        ar.put(course);
 
                     }
+                    return ar;
 
                 }
             }
