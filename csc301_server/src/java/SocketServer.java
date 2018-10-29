@@ -1,5 +1,3 @@
-package Server;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,6 +6,9 @@ public class SocketServer {
     private int portNumber = 30000;
     private ServerSocket serverSocket;
 
+    public SocketServer() {
+
+    }
     public void runserver() {
         try {
             serverSocket = new ServerSocket(portNumber);
@@ -17,7 +18,8 @@ public class SocketServer {
         while (true) {
             try {
                 Socket clientSocket = serverSocket.accept();
-                new Thread(new MyRunnable(clientSocket)).start();
+                MyRunnable n = new MyRunnable(clientSocket);
+                n.run();
             } catch(IOException e) {
                 e.printStackTrace();
             }
