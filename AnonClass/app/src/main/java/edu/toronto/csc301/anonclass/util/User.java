@@ -1,8 +1,10 @@
-package baseFunctions;
+package edu.toronto.csc301.anonclass.util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class User {
@@ -85,10 +87,5 @@ public class User {
     @Override
     public boolean equals(Object user2) {
         return user2 instanceof User && ((User) user2).email.equals(this.email);
-    }
-
-    @Override
-    public String toString() {
-        return (new JSONObject(this)).toString();
     }
 }
