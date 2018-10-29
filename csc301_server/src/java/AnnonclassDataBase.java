@@ -108,7 +108,40 @@ public class AnnonclassDataBase {
             return null;
         }
     }
-
+    
+    public int addCourse(JSONObject info) {
+    	try {
+    		//get instructor email, instructor name, location, section number
+    		String instr_email = info.getString("instructor_email");
+    		String instr_name = info.getString("instructor_name");
+    		String course_name = info.getString("course_name");
+    		int sct_number = info.getString("section_number");
+    		String location = info.getString("location");
+    		
+    		//check the whether the user is a teacher 
+    		PreparedStatement execStat = connection.prepareStatement("select studentFlag from user " +
+                     "where user.email = ?";
+    		 execStat.setString(1, instr_email);
+    		 ResultSet result = execStat.executeQuery();
+    		 if(isResultSetEmpty(result)) {
+    			 return -1;
+    		 }else {
+    			 boolean is_std = result.getObject(1);
+    			 if(flag == true) {// the user is a student, not permitted
+    				 return -1;
+    			 }else {//the user is a teacher
+    				 //add the course to the table'course_section'
+    				 PreparedStatement insert = connection.prepareStatement("insert " +
+    	                        "into course_section values(sct_number, instr_email, instr_name, location)");
+    			 }
+    		 }catch(SQLException e){
+    			 e.printStackTrace();
+    			 return -1;
+    		 }
+    	}  
+    	//add success
+    	return 1;
+    }
 
     private static boolean isResultSetEmpty(ResultSet resultSet) throws SQLException {
         return !resultSet.first();
