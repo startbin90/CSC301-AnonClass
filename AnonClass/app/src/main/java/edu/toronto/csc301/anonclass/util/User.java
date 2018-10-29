@@ -17,6 +17,11 @@ public class User {
 
     private Set<Course> courses = new HashSet<Course>();
 
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public User(String email, String UTORid, String password,
                 String firstName, String lastName, boolean isStudent) {
         this.email = email;
