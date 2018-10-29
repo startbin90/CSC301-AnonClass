@@ -1,3 +1,6 @@
+package Server;
+
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,24 +14,22 @@ public class AnnonclassDataBase {
         this.connection = connection;
     }
 
-    public void connectDB(String url) throws SQLException {
+    public void connectDB(String url) {
         //write your code here.
         try {
             connection = DriverManager.getConnection(
-                    url, "anonadmin", "anonpassword");
+                    url);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw e;
 
         }
     }
 
-    public void disconnectDB() throws SQLException{
+    public void disconnectDB() {
         try {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw e;
         }
     }
 
@@ -83,7 +84,7 @@ public class AnnonclassDataBase {
                     return null;
                 } else {
                     PreparedStatement courses = connection.prepareStatement("select course_user.course_name, " +
-                            "course_user.section_number, course_section.instructor_name, course_section.location from user, " +
+                            "course_user.section_number, course_section.teacher_id from user, " +
                             "course_user, course_section where user.email = ? and user.email = course_user.user_email " +
                             "and course_user.course_name = course_section.course_name and course_user.section_number " +
                             "= course_section.section_number;");
@@ -92,13 +93,9 @@ public class AnnonclassDataBase {
                     while(re.next()) {
                         JSONObject course = new JSONObject();
                         course.put("courseCode", re.getString(1));
-                        course.put("sectionCode", re.getString(2));
-                        course.put("instructor", re.getString(3));
-                        course.put("location", re.getString(4));
-                        ar.put(course);
+                        course.put("sectionCode", re.getInt(2));
 
                     }
-                    return ar;
 
                 }
             }
@@ -115,7 +112,7 @@ public class AnnonclassDataBase {
     		String instr_email = info.getString("instructor_email");
     		String instr_name = info.getString("instructor_name");
     		String course_name = info.getString("course_name");
-    		int sct_number = info.getString("section_number");
+    		int sct_number = info.getInt("section_number");
     		String location = info.getString("location");
     		
     		//check the whether the user is a teacher 
@@ -127,18 +124,18 @@ public class AnnonclassDataBase {
     			 return -1;
     		 }else {
     			 boolean is_std = result.getObject(1);
-    			 if(flag == true) {// the user is a student, not permitted
+    			 if(is_std == true) {// the user is a student, not permitted
     				 return -1;
     			 }else {//the user is a teacher
     				 //add the course to the table'course_section'
     				 PreparedStatement insert = connection.prepareStatement("insert " +
     	                        "into course_section values(sct_number, instr_email, instr_name, location)");
     			 }
-    		 }catch(SQLException e){
-    			 e.printStackTrace();
-    			 return -1;
     		 }
-    	}  
+    	}catch(SQLException e){
+			 e.printStackTrace();
+			 return -1;
+		}
     	//add success
     	return 1;
     }
