@@ -1,3 +1,4 @@
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -17,13 +18,12 @@ public class MyRunnable implements Runnable {
             PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
             AnnonclassDataBase db = new AnnonclassDataBase(connection);
             db.connectDB("jdbc:postgresql://anonclass1.cszu4qtoxymw.us-east-1.rds.amazonaws.com:5432/AnonClass");
-            System.out.println("1\n");
+
             String request = in.readLine();
-            System.out.println(request);
+
             if (request.equals("Sign up")) {
-                System.out.println("2\n");
+
                 String info = in.readLine();
-                System.out.println(info);
                 JSONObject obj = new JSONObject(info);
                 if (db.signup(obj)) {
                     out.println("true");
@@ -34,7 +34,13 @@ public class MyRunnable implements Runnable {
             } else if (request.equals("Log in")) {
                 String info = in.readLine();
                 JSONObject obj = new JSONObject(info);
-
+                JSONArray ar = db.login(obj);
+                if (ar == null) {
+                    out.println("false");
+                } else {
+                    out.println("true");
+                    out.println(ar);
+                }
             }
             db.disconnectDB();
         } catch(IOException e) {
