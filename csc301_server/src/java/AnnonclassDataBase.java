@@ -1,6 +1,3 @@
-package Server;
-
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,22 +11,24 @@ public class AnnonclassDataBase {
         this.connection = connection;
     }
 
-    public void connectDB(String url) {
+    public void connectDB(String url) throws SQLException {
         //write your code here.
         try {
             connection = DriverManager.getConnection(
-                    url);
+                    url, "anonadmin", "anonpassword");
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
 
         }
     }
 
-    public void disconnectDB() {
+    public void disconnectDB() throws SQLException{
         try {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
     }
 

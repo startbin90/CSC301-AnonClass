@@ -1,4 +1,4 @@
-package Server;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -12,31 +12,42 @@ public class MyRunnable implements Runnable {
         this.client = client;
     }
 
-    @Override
     public void run() {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
             AnnonclassDataBase db = new AnnonclassDataBase(connection);
-            db.connectDB("");
+            db.connectDB("jdbc:postgresql://anonclass1.cszu4qtoxymw.us-east-1.rds.amazonaws.com:5432/AnonClass");
+
             String request = in.readLine();
+
             if (request.equals("Sign up")) {
+
                 String info = in.readLine();
                 JSONObject obj = new JSONObject(info);
                 if (db.signup(obj)) {
-                    out.write("true");
+                    out.println("true");
                 } else {
-                    out.write("false");
+                    out.println("false");
                 }
 
             } else if (request.equals("Log in")) {
                 String info = in.readLine();
                 JSONObject obj = new JSONObject(info);
-
+                JSONArray ar = db.login(obj);
+                if (ar == null) {
+                    out.println("false");
+                } else {
+                    out.println("true");
+                    out.println(ar);
+                }
             }
             db.disconnectDB();
         } catch(IOException e) {
             e.printStackTrace();
+            System.exit(1);
+        } catch(SQLException e2) {
+            e2.printStackTrace();
             System.exit(1);
         }
     }
