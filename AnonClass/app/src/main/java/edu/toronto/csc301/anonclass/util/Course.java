@@ -1,6 +1,8 @@
-package baseFunctions;
+package edu.toronto.csc301.anonclass.util;
 
 import org.json.JSONObject;
+
+import java.util.Map;
 
 public class Course {
     private String courseCode;
@@ -45,11 +47,6 @@ public class Course {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    @Override
-    public String toString() {
-        return (new JSONObject(this)).toString();
     }
 
 }
