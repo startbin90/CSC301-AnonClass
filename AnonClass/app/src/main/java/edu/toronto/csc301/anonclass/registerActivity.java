@@ -16,6 +16,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import edu.toronto.csc301.anonclass.util.User;
+
 public class registerActivity extends AppCompatActivity {
 
     private View mProgressView;
@@ -28,7 +30,7 @@ public class registerActivity extends AppCompatActivity {
     private EditText mPassword;
     private EditText mConfirm;
     private Button submit;
-    private AsyncTask mAuthTask = null;
+    private UserRegisterTask mAuthTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +68,8 @@ public class registerActivity extends AppCompatActivity {
         mLastName.setError(null);
         mPassword.setError(null);
         mConfirm.setError(null);
-
+        ((RadioButton)findViewById(R.id.signIn_teacher))
+                .setError(null);
         boolean cancel = false;
         View focusView = null;
 
@@ -78,7 +81,7 @@ public class registerActivity extends AppCompatActivity {
         String pwd = mPassword.getText().toString();
         String confirm = mConfirm.getText().toString();
         int indicator = mStudentFlag.getCheckedRadioButtonId();
-        Boolean flag;
+        Boolean flag = true;
         switch (indicator) {
             case R.id.signIn_student:
                 flag = true;
@@ -87,7 +90,8 @@ public class registerActivity extends AppCompatActivity {
                 flag = false;
                 break;
             default:
-                Toast.makeText(this, "student or teacher", Toast.LENGTH_SHORT).show();
+                ((RadioButton)findViewById(R.id.signIn_teacher))
+                        .setError(getString(R.string.error_field_required));
                 focusView = mStudentFlag;
                 cancel = true;
                 break;
@@ -107,20 +111,30 @@ public class registerActivity extends AppCompatActivity {
             cancel = true;
         }
 
+        // Check for UTORid
+        if (TextUtils.isEmpty(utorid)) {
+            mUtorid.setError(getString(R.string.error_field_required));
+            focusView = mUtorid;
+            cancel = true;
+        }
         // Check for a first name
-        if (!TextUtils.isEmpty(firstName)) {
-            mFirstName.setError(getString(R.string.error_incorrect_firstName));
+        if (TextUtils.isEmpty(firstName)) {
+            mFirstName.setError(getString(R.string.error_field_required));
             focusView = mFirstName;
             cancel = true;
         }
         // Check for a last name
-        if (!TextUtils.isEmpty(lastName)) {
-            mLastName.setError(getString(R.string.error_incorrect_lastName));
+        if (TextUtils.isEmpty(lastName)) {
+            mLastName.setError(getString(R.string.error_field_required));
             focusView = mLastName;
             cancel = true;
         }
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(pwd) && !isPasswordValid(pwd)) {
+        if (TextUtils.isEmpty(pwd)) {
+            mPassword.setError(getString(R.string.error_field_required));
+            focusView = mEmailField;
+            cancel = true;
+        } else if (!isPasswordValid(pwd)) {
             mPassword.setError(getString(R.string.error_invalid_password));
             focusView = mPassword;
             cancel = true;
@@ -141,8 +155,9 @@ public class registerActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new registerActivity.UserRegisterTask("","");
-            mAuthTask.execute((Void) null);
+            User user = User.getRegisterUserObj(email, pwd, utorid, firstName, lastName, flag);
+            mAuthTask = new UserRegisterTask(user);
+            mAuthTask.execute((Void)null);
         }
     }
     private boolean isEmailValid(String email) {
@@ -197,12 +212,10 @@ public class registerActivity extends AppCompatActivity {
      */
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
+        private final User mUser;
 
-        UserRegisterTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+        UserRegisterTask(User user) {
+            mUser = user;
         }
 
         @Override
@@ -225,9 +238,12 @@ public class registerActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-
+                Toast.makeText(registerActivity.this, "Success", Toast.LENGTH_SHORT)
+                .show();
+                registerActivity.this.finish();
             } else {
-
+                Toast.makeText(registerActivity.this, "Failed", Toast.LENGTH_SHORT)
+                        .show();
             }
         }
 
