@@ -1,32 +1,31 @@
-drop schema if exists dbSchema cascade;
-create schema dbSchema;
-set search_path to dbSchema;
+DROP SCHEMA IF EXISTS dbSchema CASCADE;
+CREATE SCHEMA dbSchema;
+SET search_path TO dbSchema;
 
-create table user(
-	email varchar(50) primary key,
-	pwdHash char(32) not null,
-	utorid char(8) unique,
-	firstName varchar(10) not null,
-	lastName varchar(10) not null,
-	studentFlag boolean not null	
+CREATE TABLE client(
+  email varchar(50) PRIMARY KEY,
+  pwdHash char(32) NOT null,
+  utorid char(8) UNIQUE,
+  firstName varchar(10) NOT null,
+  lastName varchar(10) NOT null,
+  studentFlag boolean NOT null  
 );
 
-create table course_user(
-	id int auto_increment key,
+CREATE TABLE course_user(
+  id bigserial PRIMARY KEY,
   course_name varchar(40),
   section_number int,
-	user_email varchar(50),
-  FOREIGN KEY(user_email) REFERENCES user(email)
+  user_email varchar(50),
+  FOREIGN KEY(user_email) REFERENCES client(email)
 );
 
-create table course_section(
-  id int auto_increment key,
- 	course_name varchar(40),
+CREATE TABLE course_section(
+  id bigserial PRIMARY KEY,
+  course_name varchar(40),
   section_number int,
   instructor_email varchar(50),
   instructor_name varchar(20),
-  location varchar(20)
-  CONSTRAINT course_section UNIQUE (course_name, section_number)
-  FOREIGN KEY(instructor_email) REFERENCES user(email)
+  locations varchar(20),
+  UNIQUE (course_name, section_number),
+  FOREIGN KEY(instructor_email) REFERENCES client(email)
 );
-
