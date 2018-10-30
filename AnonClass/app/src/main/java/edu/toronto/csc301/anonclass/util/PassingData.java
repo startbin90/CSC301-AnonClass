@@ -1,9 +1,15 @@
 package edu.toronto.csc301.anonclass.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONObject;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Map;
 
 /* Pass data between Android app and server
@@ -25,65 +31,73 @@ public class PassingData {
     }
 
     //return 1 if success, -1 if failed
-    public int SignUp(String email, String UTORid, String password,
-                      String firstName, String lastName, boolean isStudent) {
-        User newUser = new User(email, UTORid, password, firstName, lastName, isStudent);
-        StringBuilder info = new StringBuilder();
-        info.append("Sign up\n");
+    public int SignUp(User user) {
+        Gson gson = new GsonBuilder().create();
+        String info = gson.toJson(user);
 
-        JSONObject obj = new JSONObject((Map)newUser);
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-        BufferedReader in = passing(info.toString());
-        if (in != null) {
-            try {
+            out.print("Sign up\n" + info);
+            String result = in.readLine();
 
-                return Integer.parseInt(in.readLine());
-            } catch (IOException e) {
-                return -1;
-            }
+            return Integer.parseInt(result);
+
+        } catch (IOException e) {
+            return -1;
         }
-
-        return -1;
 
     }
 
     //return 1 if success, -1 if failed
-    public int LogIn(String email, String password) {
-        StringBuilder info = new StringBuilder();
-        info.append("Sign up\n");
-        info.append(String.format("%s\n%s\n", email, password));
+    public ArrayList<Course> LogIn(String email, String password) {
+        User user = new User(email, password);
 
-        BufferedReader in = passing(info.toString());
-        if (in != null) {
-            try {
-                return Integer.parseInt(in.readLine());
-            } catch (IOException e) {
-                return -1;
-            }
+        Gson gson = new GsonBuilder().create();
+        String info = gson.toJson(user);
+
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+
+            out.print("Log in\n" + info);
+            String result = in.readLine();
+
+            Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
+            ArrayList<Course> courses = gson.fromJson(result, listType);
+
+            return courses;
+
+        } catch (IOException e) {
+            return null;
         }
-
-        return -1;
     }
 
     // display courses registered by given student
-    public String DisplayCourses(String email) {
-        StringBuilder info = new StringBuilder();
-        info.append("Display Courses\n");
-        info.append(String.format("%s\n%s\n", email));
+    public ArrayList<Course> DisplayCourses(String email) {
+        Gson gson = new GsonBuilder().create();
+        try {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-        BufferedReader in = passing(info.toString());
-        if (in != null) {
-            try {
-                String courses;
-                while ((courses = in.readLine()) != null) {
-                }
+            out.print("Display Courses\n");
+            String result = in.readLine();
 
-            } catch (IOException e) {
-                return null;
-            }
+            Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
+            ArrayList<Course> courses = gson.fromJson(result, listType);
+
+            return courses;
+
+        } catch (IOException e) {
+            return null;
         }
+    }
 
-        return null;
+    public int AddCourse(String email, Course course) {
+
+        return 0;
+
     }
 
     public void AskingQuestion(String question) {
