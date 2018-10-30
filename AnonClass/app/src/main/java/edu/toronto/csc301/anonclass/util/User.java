@@ -1,32 +1,53 @@
 package edu.toronto.csc301.anonclass.util;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-public class User {
+public class User implements EnclosedInfo{
     private String email;
-    private String UTORid;
     private String password;
+    private String UTORid;
     private String firstName;
     private String lastName;
     private Boolean isStudent;
 
-    private Set<Course> courses = new HashSet<Course>();
+    private Set<Course> courses = new HashSet<>();
 
-    public User(String email, String password) {
+    public static User getLoginUserObj(String email, String pwd) {
+        return new User(email, pwd);
+    }
+
+    public static User getRegisterUserObj(String email, String pwd, String UTORid,
+                                          String firstName, String lastName, boolean isStudent) {
+        return new User(email, pwd, UTORid, firstName, lastName, isStudent);
+    }
+
+    public static User userFromServer(String email, String UTORid,
+                                          String firstName, String lastName, boolean isStudent) {
+        return new User(email, UTORid, firstName, lastName, isStudent);
+    }
+
+    private User(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public User(String email, String UTORid, String password,
+    private User(String email, String UTORid,
                 String firstName, String lastName, boolean isStudent) {
         this.email = email;
         this.UTORid = UTORid;
-        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isStudent = isStudent;
+    }
+    private User(String email, String pwd, String UTORid,
+                 String firstName, String lastName, boolean isStudent) {
+        this.email = email;
+        this.password = pwd;
+        this.UTORid = UTORid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isStudent = isStudent;
@@ -92,5 +113,17 @@ public class User {
     @Override
     public boolean equals(Object user2) {
         return user2 instanceof User && ((User) user2).email.equals(this.email);
+    }
+
+    @Override
+    public String serialize() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this);
+    }
+
+    @Override
+    public EnclosedInfo deSerialize(String Json) {
+        Gson gson = new Gson();
+        return gson.fromJson(Json, User.class);
     }
 }

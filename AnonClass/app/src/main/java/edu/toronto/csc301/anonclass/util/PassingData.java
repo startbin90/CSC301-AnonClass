@@ -51,11 +51,10 @@ public class PassingData {
     }
 
     //return 1 if success, -1 if failed
-    public ArrayList<Course> LogIn(String email, String password) {
-        User user = new User(email, password);
+    public ArrayList<Course> LogIn(User user) {
 
         Gson gson = new GsonBuilder().create();
-        String info = gson.toJson(user);
+        String info = user.serialize();
 
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
