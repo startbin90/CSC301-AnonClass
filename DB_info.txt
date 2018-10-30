@@ -2,7 +2,7 @@ DB information
 
 ********************************************************
 *  Endpoint                                            *
-*  anonclass1.cszu4qtoxymw.us-east-1.rds.amazonaws.com  *
+*  anonclass.cszu4qtoxymw.us-east-1.rds.amazonaws.com  *
 *                                                      *
 *  Host                                                *
 *  5432                                                *

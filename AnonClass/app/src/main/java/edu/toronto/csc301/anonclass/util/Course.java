@@ -1,10 +1,9 @@
 package edu.toronto.csc301.anonclass.util;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import java.util.Map;
-
-public class Course {
+public class Course implements EnclosedInfo {
     private String courseCode;
     private String sectionCode;
     private String instructor;
@@ -49,4 +48,15 @@ public class Course {
         this.location = location;
     }
 
+    @Override
+    public String serialize() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(this);
+    }
+
+    @Override
+    public EnclosedInfo deSerialize(String Json) {
+        Gson gson = new Gson();
+        return gson.fromJson(Json, Course.class);
+    }
 }
