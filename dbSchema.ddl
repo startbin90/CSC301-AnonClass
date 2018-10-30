@@ -14,7 +14,7 @@ CREATE TABLE client(
 CREATE TABLE course_user(
   id bigserial PRIMARY KEY,
   course_name varchar(40),
-  section_number int,
+  section_number varchar(10),
   user_email varchar(50),
   FOREIGN KEY(user_email) REFERENCES client(email)
 );
@@ -22,7 +22,7 @@ CREATE TABLE course_user(
 CREATE TABLE course_section(
   id bigserial PRIMARY KEY,
   course_name varchar(40),
-  section_number int,
+  section_number varchar(10),
   instructor_email varchar(50),
   instructor_name varchar(20),
   locations varchar(20),
