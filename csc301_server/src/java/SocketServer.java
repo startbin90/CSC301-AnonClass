@@ -19,7 +19,7 @@ public class SocketServer {
             try {
                 Socket clientSocket = serverSocket.accept();
                 MyRunnable n = new MyRunnable(clientSocket);
-                n.run();
+                new Thread(n).start();
             } catch(IOException e) {
                 e.printStackTrace();
             }

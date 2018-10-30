@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.sql.*;
 public class MyRunnable implements Runnable {
     private Socket client;
-    private Connection connection;
 
     public MyRunnable(Socket client) {
         this.client = client;
@@ -16,37 +15,42 @@ public class MyRunnable implements Runnable {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
-            AnnonclassDataBase db = new AnnonclassDataBase(connection);
-            db.connectDB("jdbc:postgresql://anonclass1.cszu4qtoxymw.us-east-1.rds.amazonaws.com:5432/AnonClass");
+            AnnonclassDataBase db = new AnnonclassDataBase();
+            db.connectDB("jdbc:postgresql://localhost:5432/anonclass");
 
             String request = in.readLine();
 
             if (request.equals("Sign up")) {
-
                 String info = in.readLine();
                 JSONObject obj = new JSONObject(info);
-                if (db.signup(obj)) {
-                    out.println("true");
-                } else {
-                    out.println("false");
+                try {
+                    out.println(db.signup(obj));
+                } catch (SQLException sqle) {
+                    // exception threw by Database when try to sign up. write -1 to the client.
+                    out.println(-1);
                 }
-
             } else if (request.equals("Log in")) {
                 String info = in.readLine();
                 JSONObject obj = new JSONObject(info);
-                JSONArray ar = db.login(obj);
-                if (ar == null) {
-                    out.println("false");
-                } else {
-                    out.println("true");
-                    out.println(ar);
+                try {
+                    JSONArray ar = db.login(obj);
+                    if (ar == null) {
+                        out.println(1);
+                    } else {
+                        out.println(0);
+                        out.println(ar);
+                    }
+                } catch (SQLException sqle) {
+                    // exception threw by Database when try to sign up. write -1 to the client.
+                    out.println(-1);
                 }
             }
             db.disconnectDB();
         } catch(IOException e) {
             e.printStackTrace();
             System.exit(1);
-        } catch(SQLException e2) {
+        } catch (SQLException e2) {
+            // Error when connect to database / disconnect
             e2.printStackTrace();
             System.exit(1);
         }
