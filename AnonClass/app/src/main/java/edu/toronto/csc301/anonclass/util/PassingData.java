@@ -4,22 +4,24 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Map;
 
 /* Pass data between Android app and server
 */
 public class PassingData {
 
-    private String host = "whatever";
+    private String host = "host address";
     private int portNumber = 30000;
 
     private Socket socket;
+    Gson gson = new Gson();
 
     public PassingData() {
         try {
@@ -32,88 +34,103 @@ public class PassingData {
 
     //return 1 if success, -1 if failed
     public int SignUp(User user) {
-        Gson gson = new GsonBuilder().create();
-        String info = gson.toJson(user);
+        String info = user.serialize();
 
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+        String result = passing("Sign up", info);
 
-            out.print("Sign up\n" + info);
-            String result = in.readLine();
-
+        if (result != null) {
             return Integer.parseInt(result);
-
-        } catch (IOException e) {
+        } else {
             return -1;
         }
 
     }
 
-    //return 1 if success, -1 if failed
-    public ArrayList<Course> LogIn(User user) {
+    // login and display all courses on UI
+    public ArrayList<Course> LogIn(String email, String password) {
+        User user = User.getLoginUserObj(email, password);
 
-        Gson gson = new GsonBuilder().create();
         String info = user.serialize();
 
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+        String result = passing("Log in", info);
 
-            out.print("Log in\n" + info);
-            String result = in.readLine();
-
+        if (result != null) {
             Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
             ArrayList<Course> courses = gson.fromJson(result, listType);
 
             return courses;
-
-        } catch (IOException e) {
+        } else {
             return null;
         }
     }
 
     // display courses registered by given student
     public ArrayList<Course> DisplayCourses(String email) {
-        Gson gson = new GsonBuilder().create();
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-            out.print("Display Courses\n");
-            String result = in.readLine();
+        String result = passing("Display courses", "");
 
+        if (result != null) {
             Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
             ArrayList<Course> courses = gson.fromJson(result, listType);
 
             return courses;
-
-        } catch (IOException e) {
+        } else {
             return null;
         }
     }
 
-    public int AddCourse(String email, Course course) {
+    // student add course, success return 1, fail return -1
+    public int AddCourse(String email, Course course){
+        String info = course.serialize();
 
-        return 0;
+        String result = passing("Add course", info);
+        if (result != null) {
+            return Integer.parseInt(result);
+        } else {
+            return -1;
+        }
 
     }
 
-    public void AskingQuestion(String question) {
+
+    // instructor create a course, success return 1, fail return -1
+    public int CreateCourse(Course course) {
+
+        String result = passing("Create course", course.serialize());
+        if (result != null) {
+            return Integer.parseInt(result);
+        } else {
+            return -1;
+        }
 
 
     }
 
-    private BufferedReader passing(String info) {
+    public int AskingQuestion(String question) {
+
+        String result = passing("Ask question", question);
+
+        if (result != null) {
+            return Integer.parseInt(result);
+        } else {
+            return -1;
+        }
+
+    }
+
+    private String passing(String instruction, String info) {
+
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
-            out.write(info);
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-            return in;
+            out.print(instruction + "\n" + info);
+
+            return in.readLine();
+
         } catch (IOException e) {
             return null;
         }
-    }
 
+    }
 }
