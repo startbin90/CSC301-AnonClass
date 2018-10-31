@@ -5,8 +5,8 @@ import java.sql.Connection;
 
 public class Server {
     public static void main(String[] args) throws Exception{
-//        SocketServer sc = new SocketServer();
-//        sc.runserver();
+        SocketServer sc = new SocketServer();
+        sc.runserver();
 
 //        AnnonclassDataBase db = new AnnonclassDataBase();
 //        db.connectDB("jdbc:postgresql://localhost:5432/anonclass");

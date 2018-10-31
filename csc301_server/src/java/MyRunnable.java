@@ -22,13 +22,13 @@ public class MyRunnable implements Runnable {
             PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
             AnnonclassDataBase db = new AnnonclassDataBase();
             db.connectDB("jdbc:postgresql://localhost:5432/anonclass");
-
             String request = in.readLine();
             try {
                 if (request.equals("Sign up")) {
                     String info = in.readLine();
                     JSONObject obj = new JSONObject(info);
-                    out.println(db.signup(obj));
+                    int res = db.signup(obj);
+                    out.println(res);
                 } else if (request.equals("Log in")) {
                     String info = in.readLine();
                     JSONObject obj = new JSONObject(info);
@@ -64,7 +64,7 @@ public class MyRunnable implements Runnable {
 
                 }
             } catch (SQLException unhandled) {
-                out.println(-1);
+                unhandled.printStackTrace();
             }
             db.disconnectDB();
         } catch(IOException e) {

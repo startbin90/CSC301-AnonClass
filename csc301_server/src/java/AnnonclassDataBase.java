@@ -26,11 +26,11 @@ public class AnnonclassDataBase {
     public int signup(JSONObject info) throws SQLException{
 
         String email = info.getString("email");
-        String psw_hash = info.getString("password");
-        String utorid = info.getString("UTORid");
+        String psw_hash = info.getString("pwdHash");
+        String utorid = info.getString("utorid");
         String firstName = info.getString("firstName");
         String lastName = info.getString("lastName");
-        Boolean isStudent = info.getBoolean("isStudent");
+        Boolean isStudent = info.getBoolean("studentFlag");
         PreparedStatement execStat = connection.prepareStatement("select email from dbschema.client where email = ? or utorid = ?;");
         execStat.setString(1, email);
         execStat.setString(2, utorid);
@@ -55,7 +55,7 @@ public class AnnonclassDataBase {
     public JSONArray login(JSONObject info) throws SQLException{
 
         String email = info.getString("email");
-        String password = info.getString("password");
+        String password = info.getString("pwdHash");
         JSONArray ar = new JSONArray();
         PreparedStatement execStat = connection.prepareStatement("select email from dbschema.client " +
                         "where email = ?;", ResultSet.TYPE_SCROLL_SENSITIVE,
@@ -71,7 +71,7 @@ public class AnnonclassDataBase {
                 return null;
             } else {
                 PreparedStatement courses = connection.prepareStatement("select course_name, course_code, " +
-                                "section_number " +
+                                "section_number, instructor_email, instructor_name, time_created, locations " +
                                 "from dbschema.course_user, " +
                                 "dbschema.course_section " +
                                 "where dbschema.course_user.selected_course = dbschema.course_section.id " +
@@ -84,6 +84,10 @@ public class AnnonclassDataBase {
                     course.put("course_name", re.getString(1));
                     course.put("course_code", re.getString(2));
                     course.put("section_number", re.getString(3));
+                    course.put("instructor_email", re.getString(4));
+                    course.put("instructor_name", re.getString(5));
+                    course.put("time_created", re.getDate(6));
+                    course.put("location", re.getString(7));
                     ar.put(course);
                 }
                 return ar;
@@ -127,7 +131,7 @@ public class AnnonclassDataBase {
     	return 1;
     }
 
-    public int enroll_course(JSONObject info) throws SQLException{
+    public int enroll_course(JSONObject info) throws SQLException {
         String email = info.getString("email");
         String course_name = info.getString("course_name");
         String section_number = info.getString("section_number");
