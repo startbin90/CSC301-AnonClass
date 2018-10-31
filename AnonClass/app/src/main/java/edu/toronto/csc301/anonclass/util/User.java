@@ -39,10 +39,10 @@ public class User implements EnclosedInfo{
     private User(String email, String UTORid,
                 String firstName, String lastName, boolean isStudent, List<Course> courses) {
         this.email = email;
-        this.utorid = utorid;
+        this.utorid = UTORid;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.isStudent = isStudent;
+        this.studentFlag = isStudent;
         this.courses = courses;
 
     }
@@ -125,7 +125,7 @@ public class User implements EnclosedInfo{
     }
 
     public static User deSerialize(String Json) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().create();
         return gson.fromJson(Json, User.class);
     }
 }

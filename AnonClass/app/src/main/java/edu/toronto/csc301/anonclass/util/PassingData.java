@@ -2,44 +2,33 @@ package edu.toronto.csc301.anonclass.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /* Pass data between Android app and server
 */
 public class PassingData {
 
-    private String host = "host address";
-    private int portNumber = 30000;
+    private static final String host = "100.64.170.86";
+    private static final int portNumber = 30000;
 
-    private Socket socket;
-    Gson gson = new Gson();
-
-    public PassingData() {
-        try {
-            this.socket = new Socket(host, portNumber);
-        } catch (IOException e) {
-            socket = null;
-        }
-
-    }
+    private static Gson gson = new GsonBuilder().create();
 
     //return 1 if success, -1 if failed
-    public int SignUp(User user) {
-        String info = user.serialize();
+    public static int SignUp(User user) {
 
-        String result = passing("Sign up", info);
+        ArrayList<String> results = passing("Sign up", 1, user.serialize());
 
-        if (result != null) {
-            return Integer.parseInt(result);
+        if (results != null) {
+            return Integer.parseInt(results.get(0));
         } else {
             return -1;
         }
@@ -47,45 +36,59 @@ public class PassingData {
     }
 
     // login and display all courses on UI
-    public ArrayList<Course> LogIn(String email, String password) {
+    public static retMsg LogIn(String email, String password) {
         User user = User.getLoginUserObj(email, password);
 
-        String info = user.serialize();
+        ArrayList<String> results = passing("Log in", 2, user.serialize());
 
-        String result = passing("Log in", info);
+        if (results != null) {
+            int error = Integer.parseInt(results.get(0));
+            if (error == 1) {
+                return new retMsg(error, null);
+            }
 
-        if (result != null) {
-            Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
-            ArrayList<Course> courses = gson.fromJson(result, listType);
+            User fullUser = User.deSerialize(results.get(1));
 
-            return courses;
+            return new retMsg(error, fullUser);
         } else {
             return null;
         }
     }
 
     // display courses registered by given student
-    public ArrayList<Course> DisplayCourses(String email) {
+    public static retMsg DisplayCourses(String email) {
 
-        String result = passing("Display courses", "");
+        ArrayList<String> results = passing("Display courses", 2, "");
 
-        if (result != null) {
-            Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
-            ArrayList<Course> courses = gson.fromJson(result, listType);
+        if (results != null) {
+            int error = Integer.parseInt(results.get(0));
+            if (error == 1) {
+                return new retMsg(error, null);
+            }
 
-            return courses;
+            User user = User.deSerialize(results.get(1));
+
+            return new retMsg(error, user);
         } else {
             return null;
         }
     }
 
-    // student add course, success return 1, fail return -1
-    public int AddCourse(String email, Course course){
-        String info = course.serialize();
+    // student add course, success return 0, fail return 1, error return -1
+    public static int EnrolCourse(String email, Course course){
+//        String info = course.serialize();
 
-        String result = passing("Add course", info);
-        if (result != null) {
-            return Integer.parseInt(result);
+        HashMap<String, Object> infoMap = new HashMap<String, Object>();
+        infoMap.put("email", email);
+        infoMap.put("course_name", course.getCourse_name());
+        infoMap.put("section_number", course.getSection_number());
+
+        String info = gson.toJson(infoMap);
+
+        ArrayList<String> results = passing("enrol", 1,info);
+
+        if (results != null) {
+            return Integer.parseInt(results.get(0));
         } else {
             return -1;
         }
@@ -94,11 +97,12 @@ public class PassingData {
 
 
     // instructor create a course, success return 1, fail return -1
-    public int CreateCourse(Course course) {
+    public static int CreateCourse(Course course) {
 
-        String result = passing("Create course", course.serialize());
-        if (result != null) {
-            return Integer.parseInt(result);
+        ArrayList<String> results = passing("create", 1, course.serialize());
+
+        if (results != null) {
+            return Integer.parseInt(results.get(0));
         } else {
             return -1;
         }
@@ -106,29 +110,43 @@ public class PassingData {
 
     }
 
-    public int AskingQuestion(String question) {
+    // ask question
+    public static int AskingQuestion(String question) {
 
-        String result = passing("Ask question", question);
+        ArrayList<String> results = passing("Ask question", 1, question);
 
-        if (result != null) {
-            return Integer.parseInt(result);
+        if (results != null) {
+            return Integer.parseInt(results.get(0));
         } else {
             return -1;
         }
 
     }
 
-    private String passing(String instruction, String info) {
+
+    // return an array of information
+    // index 0 is error flag, index 1 is returned Json string
+    private static ArrayList<String> passing(String instruction, int length, String info) {
 
         try {
+            InetAddress address = InetAddress.getByName(host);
+            Socket socket = new Socket(address, portNumber);
+
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
-            out.print(instruction + "\n" + info);
+            out.println(instruction + "\n" + info);
 
-            return in.readLine();
+
+            ArrayList<String> results = new ArrayList<>();
+            for (int i = 0; i < length; i++) {
+                results.add(in.readLine());
+            }
+
+            return results;
 
         } catch (IOException e) {
+            System.out.println("Connection failed.");
             return null;
         }
 
