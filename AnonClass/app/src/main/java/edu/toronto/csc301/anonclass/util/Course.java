@@ -9,53 +9,88 @@ import java.util.List;
 
 public class Course implements EnclosedInfo {
 
-    private String courseCode;
-    private String courseName;
-    private String sectionNum;
-    private String instructorName;
-    private Date time;
-    private String location;
+    private String course_code;
+    private String course_name;
+    private String section_number;
+    private String instructor_email;
+    private String instructor_name;
+    private Date date;
+    private String locations;
 
     public static List<Course> getDummyCourses(){
         List<Course> lst = new ArrayList<>();
         lst.add(new Course("csc301","Intro to Software Engineering",
-                "L0101", "Mark", new Date(), "BA 1210"));
+                "L0101", "emailM","Mark", new Date(), "BA 1210"));
         lst.add(new Course("csc324","Principle of Programming Language",
-                "L0101", "David", new Date(), "SS 1234"));
+                "L0101", "emailD","David", new Date(), "SS 1234"));
         return lst;
     }
 
-    public Course(String courseCode, String courseName, String sectionNum, String instructorName, Date time, String location) {
-        this.courseCode = courseCode;
-        this.courseName = courseName;
-        this.sectionNum = sectionNum;
-        this.instructorName = instructorName;
-        this.time = time;
-        this.location = location;
+    public Course(String course, String course_name, String section, String email, String instructor, Date date, String locations) {
+        course_code = course;
+        this.course_name = course_name;
+        section_number = section;
+        instructor_email = email;
+        this.instructor_name = instructor;
+        this.date = date;
+        this.locations = locations;
     }
 
     public String getCourse_code() {
         return course_code;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public void setCourse_code(String course_code) {
+        this.course_code = course_code;
     }
 
-    public String getSectionNum() {
-        return sectionNum;
+    public String getSection_number() {
+        return section_number;
     }
 
-    public String getInstructorName() {
-        return instructorName;
+    public void setSection_number(String section_number) {
+        this.section_number = section_number;
     }
 
-    public Date getTime() {
-        return time;
+    public String getInstructor_name() {
+        return instructor_name;
+    }
+
+    public void setInstructor_name(String instructor_name) {
+        this.instructor_name = instructor_name;
     }
 
     public String getLocations() {
         return locations;
+    }
+
+    public void setLocations(String locations) {
+        this.locations = locations;
+    }
+
+
+    public String getCourse_name() {
+        return course_name;
+    }
+
+    public void setCourse_name(String course_name) {
+        this.course_name = course_name;
+    }
+
+    public String getInstructor_email() {
+        return instructor_email;
+    }
+
+    public void setInstructor_email(String instructor_email) {
+        this.instructor_email = instructor_email;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
 

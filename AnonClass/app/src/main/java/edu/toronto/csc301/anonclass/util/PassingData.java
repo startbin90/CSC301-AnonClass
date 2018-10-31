@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -17,16 +18,19 @@ import java.util.ArrayList;
 */
 public class PassingData {
 
-    private String host = "host address";
-    private int portNumber = 30000;
+    private final String host = "100.64.170.86";
+    private final int portNumber = 30000;
 
     private Socket socket;
-    Gson gson = new Gson();
 
     public PassingData() {
         try {
-            this.socket = new Socket(host, portNumber);
+            InetAddress address = InetAddress.getByName(host);
+            this.socket = new Socket(address, portNumber);
+            System.out.println("Successfully connect to server.");
+
         } catch (IOException e) {
+            System.out.println("Connection failed.");
             socket = null;
         }
 
@@ -34,12 +38,11 @@ public class PassingData {
 
     //return 1 if success, -1 if failed
     public int SignUp(User user) {
-        String info = user.serialize();
 
-        String result = passing("Sign up", info);
+        String[] results = passing("Sign up", user.serialize());
 
-        if (result != null) {
-            return Integer.parseInt(result);
+        if (results != null) {
+            return Integer.parseInt(results[0]);
         } else {
             return -1;
         }
@@ -47,45 +50,46 @@ public class PassingData {
     }
 
     // login and display all courses on UI
-    public ArrayList<Course> LogIn(String email, String password) {
+    public retMsg LogIn(String email, String password) {
         User user = User.getLoginUserObj(email, password);
 
-        String info = user.serialize();
+        String[] results = passing("Log in", user.serialize());
 
-        String result = passing("Log in", info);
+        if (results != null) {
+            int error = Integer.parseInt(results[0]);
 
-        if (result != null) {
-            Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
-            ArrayList<Course> courses = gson.fromJson(result, listType);
+            User fullUser = User.deSerialize(results[1]);
 
-            return courses;
+            return new retMsg(error, fullUser);
         } else {
             return null;
         }
     }
 
     // display courses registered by given student
-    public ArrayList<Course> DisplayCourses(String email) {
+    public retMsg DisplayCourses(String email) {
 
-        String result = passing("Display courses", "");
+        String[] results = passing("Display courses", "");
 
-        if (result != null) {
-            Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
-            ArrayList<Course> courses = gson.fromJson(result, listType);
+        if (results != null) {
+            int error = Integer.parseInt(results[0]);
 
-            return courses;
+            User user = User.deSerialize(results[1]);
+
+            return new retMsg(error, user);
         } else {
             return null;
         }
     }
 
-    // student add course, success return 1, fail return -1
+    // student add course, success return 0, fail return 1, error return -1
     public int AddCourse(String email, Course course){
         String info = course.serialize();
 
-        String result = passing("Add course", info);
-        if (result != null) {
-            return Integer.parseInt(result);
+        String[] results = passing("Add course", info);
+
+        if (results != null) {
+            return Integer.parseInt(results[0]);
         } else {
             return -1;
         }
@@ -96,9 +100,10 @@ public class PassingData {
     // instructor create a course, success return 1, fail return -1
     public int CreateCourse(Course course) {
 
-        String result = passing("Create course", course.serialize());
-        if (result != null) {
-            return Integer.parseInt(result);
+        String[] results = passing("Create course", course.serialize());
+
+        if (results != null) {
+            return Integer.parseInt(results[0]);
         } else {
             return -1;
         }
@@ -108,17 +113,17 @@ public class PassingData {
 
     public int AskingQuestion(String question) {
 
-        String result = passing("Ask question", question);
+        String[] results = passing("Ask question", question);
 
-        if (result != null) {
-            return Integer.parseInt(result);
+        if (results != null) {
+            return Integer.parseInt(results[0]);
         } else {
             return -1;
         }
 
     }
 
-    private String passing(String instruction, String info) {
+    private String[] passing(String instruction, String info) {
 
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -126,7 +131,9 @@ public class PassingData {
 
             out.print(instruction + "\n" + info);
 
-            return in.readLine();
+            String[] results = {in.readLine(), in.readLine()};
+
+            return results;
 
         } catch (IOException e) {
             return null;
