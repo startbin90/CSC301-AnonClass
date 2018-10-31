@@ -31,8 +31,9 @@ public class AnnonclassDataBase {
         String firstName = info.getString("firstName");
         String lastName = info.getString("lastName");
         Boolean isStudent = info.getBoolean("isStudent");
-        PreparedStatement execStat = connection.prepareStatement("select email from dbschema.client where email = ?;");
+        PreparedStatement execStat = connection.prepareStatement("select email from dbschema.client where email = ? or utorid = ?;");
         execStat.setString(1, email);
+        execStat.setString(2, utorid);
         ResultSet result = execStat.executeQuery();
         if (!result.next()) {
             PreparedStatement insert = connection.prepareStatement("insert " +
@@ -69,18 +70,20 @@ public class AnnonclassDataBase {
             if (psw_hash.equals(password)) {
                 return null;
             } else {
-                PreparedStatement courses = connection.prepareStatement("select dbschema.course_user.course_name, " +
-                            "dbschema.course_user.section_number, dbschema.course_section.instructor_name from dbschema.client, " +
-                            "dbschema.course_user, dbschema.course_section where dbschema.client.email = ? and dbschema.client.email = dbschema.course_user.user_email " +
-                            "and dbschema.course_user.course_name = dbschema.course_section.course_name and dbschema.course_user.section_number " +
-                            "= dbschema.course_section.section_number;", ResultSet.TYPE_SCROLL_SENSITIVE,
+                PreparedStatement courses = connection.prepareStatement("select course_name, course_code, " +
+                                "section_number " +
+                                "from dbschema.course_user, " +
+                                "dbschema.course_section " +
+                                "where dbschema.course_user.selected_course = dbschema.course_section.id " +
+                                "and dbschema.course_user.user_email = ?;", ResultSet.TYPE_SCROLL_SENSITIVE,
                             ResultSet.CONCUR_UPDATABLE);
                 courses.setString(1, email);
                 ResultSet re = courses.executeQuery();
                 while(re.next()) {
                     JSONObject course = new JSONObject();
-                    course.put("courseCode", re.getString(1));
-                    course.put("sectionCode", re.getInt(2));
+                    course.put("course_name", re.getString(1));
+                    course.put("course_code", re.getString(2));
+                    course.put("section_number", re.getString(3));
                     ar.put(course);
                 }
                 return ar;
@@ -141,7 +144,7 @@ public class AnnonclassDataBase {
             }
         }
 
-        PreparedStatement exec1 = connection.prepareStatement("select section_number, course_name " +
+        PreparedStatement exec1 = connection.prepareStatement("select id " +
                 "from dbschema.course_section where section_number = ? and course_name = ?;",
                 ResultSet.TYPE_SCROLL_SENSITIVE,
                 ResultSet.CONCUR_UPDATABLE);
@@ -152,8 +155,12 @@ public class AnnonclassDataBase {
             // no such course created yet.
             return 1;
         } else {
+            resultSet.next();
+            int id = resultSet.getInt(1);
+
             PreparedStatement exec2 = connection.prepareStatement("select * from dbschema.course_user " +
-                    "where email = ? and course_name = ? and section_number = ?;", ResultSet.TYPE_SCROLL_SENSITIVE,
+                    "where dbschema.course_user, dbschema.course_section where selected_course = dbschema.course_section.id" +
+                            "and user_email = ? and course_name = ? and section_number = ?;", ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE);
             exec2.setString(1, email);
             exec2.setString(2, course_name);
@@ -166,13 +173,13 @@ public class AnnonclassDataBase {
                 exec3.setString(2, section_number);
                 exec3.setString(3, email);
                 return 0;
-
             } else {
                 // client has already enrolled
                 return 1;
             }
         }
     }
+
 
     private static boolean isResultSetEmpty(ResultSet resultSet) throws SQLException {
         return !resultSet.first();
