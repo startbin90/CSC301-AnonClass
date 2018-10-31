@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Course implements EnclosedInfo {
+
     private String courseCode;
     private String courseName;
     private String sectionNum;
@@ -33,8 +34,8 @@ public class Course implements EnclosedInfo {
         this.location = location;
     }
 
-    public String getCourseCode() {
-        return courseCode;
+    public String getCourse_code() {
+        return course_code;
     }
 
     public String getCourseName() {
@@ -53,9 +54,10 @@ public class Course implements EnclosedInfo {
         return time;
     }
 
-    public String getLocation() {
-        return location;
+    public String getLocations() {
+        return locations;
     }
+
 
     @Override
     public String serialize() {

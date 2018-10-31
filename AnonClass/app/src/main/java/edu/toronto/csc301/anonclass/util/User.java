@@ -8,11 +8,11 @@ import java.util.List;
 
 public class User implements EnclosedInfo{
     private String email;
-    private String password;
-    private String UTORid;
+    private String pwdHash;
+    private String utorid;
     private String firstName;
     private String lastName;
-    private Boolean isStudent;
+    private Boolean studentFlag;
 
     private List<Course> courses = new ArrayList<>();
 
@@ -33,26 +33,27 @@ public class User implements EnclosedInfo{
 
     private User(String email, String password) {
         this.email = email;
-        this.password = password;
+        this.pwdHash = HashPassword.hash(password);
     }
 
     private User(String email, String UTORid,
                 String firstName, String lastName, boolean isStudent, List<Course> courses) {
         this.email = email;
-        this.UTORid = UTORid;
+        this.utorid = utorid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isStudent = isStudent;
         this.courses = courses;
+
     }
-    private User(String email, String pwd, String UTORid,
-                 String firstName, String lastName, boolean isStudent) {
+    private User(String email, String pwd, String utorid,
+                 String firstName, String lastName, boolean studentFlag) {
         this.email = email;
-        this.password = pwd;
-        this.UTORid = UTORid;
+        this.pwdHash = HashPassword.hash(pwd);
+        this.utorid = utorid;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.isStudent = isStudent;
+        this.studentFlag = studentFlag;
     }
 
 
@@ -64,20 +65,20 @@ public class User implements EnclosedInfo{
         this.email = email;
     }
 
-    public String getUTORid() {
-        return UTORid;
+    public String getUtorid() {
+        return utorid;
     }
 
-    public void setUTORid(String UTORid) {
-        this.UTORid = UTORid;
+    public void setUtorid(String utorid) {
+        this.utorid = utorid;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPwdHash() {
+        return pwdHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPwdHash(String pwdHash) {
+        this.pwdHash = HashPassword.hash(pwdHash);
     }
 
     public String getFirstName() {
@@ -96,12 +97,12 @@ public class User implements EnclosedInfo{
         this.lastName = lastName;
     }
 
-    public Boolean getIsStudent() {
-        return isStudent;
+    public Boolean getStudentFlag() {
+        return studentFlag;
     }
 
-    public void setIsStudent(Boolean teacher) {
-        isStudent = teacher;
+    public void setStudentFlag(Boolean teacher) {
+        studentFlag = teacher;
     }
 
     public void addCourse(Course course) {
