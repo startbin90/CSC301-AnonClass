@@ -3,7 +3,8 @@ package edu.toronto.csc301.anonclass.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class User implements EnclosedInfo{
@@ -14,7 +15,7 @@ public class User implements EnclosedInfo{
     private String lastName;
     private Boolean isStudent;
 
-    private Set<Course> courses = new HashSet<>();
+    private List<Course> courses = new ArrayList<>();
 
     public static User getLoginUserObj(String email, String pwd) {
         return new User(email, pwd);
@@ -26,8 +27,9 @@ public class User implements EnclosedInfo{
     }
 
     public static User userFromServer(String email, String UTORid,
-                                          String firstName, String lastName, boolean isStudent) {
-        return new User(email, UTORid, firstName, lastName, isStudent);
+                                          String firstName, String lastName, boolean isStudent,
+                                      List<Course> courses) {
+        return new User(email, UTORid, firstName, lastName, isStudent, courses);
     }
 
     private User(String email, String password) {
@@ -36,12 +38,13 @@ public class User implements EnclosedInfo{
     }
 
     private User(String email, String UTORid,
-                String firstName, String lastName, boolean isStudent) {
+                String firstName, String lastName, boolean isStudent, List<Course> courses) {
         this.email = email;
         this.UTORid = UTORid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isStudent = isStudent;
+        this.courses = courses;
     }
     private User(String email, String pwd, String UTORid,
                  String firstName, String lastName, boolean isStudent) {
@@ -106,7 +109,7 @@ public class User implements EnclosedInfo{
         courses.add(course);
     }
 
-    public Set<Course> getCourses() {
+    public List<Course> getCourses() {
         return courses;
     }
 
@@ -121,8 +124,7 @@ public class User implements EnclosedInfo{
         return gson.toJson(this);
     }
 
-    @Override
-    public EnclosedInfo deSerialize(String Json) {
+    public static User deSerialize(String Json) {
         Gson gson = new Gson();
         return gson.fromJson(Json, User.class);
     }

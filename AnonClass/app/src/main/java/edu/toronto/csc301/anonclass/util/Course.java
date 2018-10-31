@@ -3,16 +3,33 @@ package edu.toronto.csc301.anonclass.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class Course implements EnclosedInfo {
     private String courseCode;
-    private String sectionCode;
-    private String instructor;
+    private String courseName;
+    private String sectionNum;
+    private String instructorName;
+    private Date time;
     private String location;
 
-    public Course(String course, String section, String instructor, String location) {
-        courseCode = course;
-        sectionCode = section;
-        this.instructor = instructor;
+    public static List<Course> getDummyCourses(){
+        List<Course> lst = new ArrayList<>();
+        lst.add(new Course("csc301","Intro to Software Engineering",
+                "L0101", "Mark", new Date(), "BA 1210"));
+        lst.add(new Course("csc324","Principle of Programming Language",
+                "L0101", "David", new Date(), "SS 1234"));
+        return lst;
+    }
+
+    public Course(String courseCode, String courseName, String sectionNum, String instructorName, Date time, String location) {
+        this.courseCode = courseCode;
+        this.courseName = courseName;
+        this.sectionNum = sectionNum;
+        this.instructorName = instructorName;
+        this.time = time;
         this.location = location;
     }
 
@@ -20,32 +37,24 @@ public class Course implements EnclosedInfo {
         return courseCode;
     }
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
+    public String getCourseName() {
+        return courseName;
     }
 
-    public String getSectionCode() {
-        return sectionCode;
+    public String getSectionNum() {
+        return sectionNum;
     }
 
-    public void setSectionCode(String sectionCode) {
-        this.sectionCode = sectionCode;
+    public String getInstructorName() {
+        return instructorName;
     }
 
-    public String getInstructor() {
-        return instructor;
-    }
-
-    public void setInstructor(String instructor) {
-        this.instructor = instructor;
+    public Date getTime() {
+        return time;
     }
 
     public String getLocation() {
         return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     @Override
@@ -54,8 +63,7 @@ public class Course implements EnclosedInfo {
         return gson.toJson(this);
     }
 
-    @Override
-    public EnclosedInfo deSerialize(String Json) {
+    public static Course deSerialize(String Json) {
         Gson gson = new Gson();
         return gson.fromJson(Json, Course.class);
     }

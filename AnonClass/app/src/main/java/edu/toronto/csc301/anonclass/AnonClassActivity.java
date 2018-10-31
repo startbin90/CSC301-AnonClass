@@ -1,5 +1,6 @@
 package edu.toronto.csc301.anonclass;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,8 +9,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
 
 import edu.toronto.csc301.anonclass.dummy.DummyContent;
+import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.User;
+import edu.toronto.csc301.anonclass.util.retMsg;
 
 public class AnonClassActivity extends AppCompatActivity
         implements EnrolledClassFragment.OnListFragmentInteractionListener {
@@ -18,6 +25,8 @@ public class AnonClassActivity extends AppCompatActivity
      * current fragment loaded
      */
     private Fragment current_fragment = null;
+    private User user;
+    private GetEnrolledClassTask mGetInfoTask;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -64,14 +73,90 @@ public class AnonClassActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anon_class);
 
+        String json = getIntent().getStringExtra("user");
+        this.user = User.deSerialize(json);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         displaySelectedScreen(R.id.navigation_home);
         navigation.getMenu().getItem(0).setChecked(true);
+
+        attemptGetInfo();
+    }
+
+    private void attemptGetInfo() {
+        if (mGetInfoTask != null) {
+            return;
+        }
+
+        mGetInfoTask = new GetEnrolledClassTask(user.getEmail());
+        mGetInfoTask.execute((Void) null);
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onRefreshInfo() {
+        attemptGetInfo();
+    }
 
+    @Override
+    public void onClassClicked(Course course) {
+
+    }
+
+    @Override
+    public List<Course> onRequestCourses() {
+        return user.getCourses();
+    }
+
+    private void postExecute(){
+        if (current_fragment instanceof EnrolledClassFragment){
+            ((EnrolledClassFragment) current_fragment).onRefreshFinished();
+        }
+    }
+
+    /**
+     * Represents an asynchronous task getting users enrolled class or created class
+     */
+    public class GetEnrolledClassTask extends AsyncTask<Void, Void, retMsg> {
+
+        private final String mEmail;
+
+        GetEnrolledClassTask(String email) {
+            mEmail = email;
+        }
+
+        @Override
+        protected retMsg doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return null;
+            }
+            User user = User.userFromServer("csc301@test.com", "abcde123",
+                    "Henry", "Liao",true, Course.getDummyCourses());
+
+            return new retMsg(0, user);
+        }
+
+        @Override
+        protected void onPostExecute(final retMsg ret) {
+            mGetInfoTask = null;
+
+            if (ret.getErrorCode() == 0) {
+                AnonClassActivity.this.user = ret.getUser();
+
+            } else {
+                Toast.makeText(AnonClassActivity.this, "get info failed", Toast.LENGTH_SHORT).show();
+            }
+            postExecute();
+        }
+
+        @Override
+        protected void onCancelled() {
+            mGetInfoTask = null;
+            //showProgress(false);
+        }
     }
 }
