@@ -12,7 +12,7 @@ CREATE TABLE client(
 );
 
 CREATE TABLE course_user(
-  id bigserial PRIMARY KEY,
+  id serial PRIMARY KEY,
   selected_course int REFERENCES course_section(id),
   -- course_name varchar(40),
   -- section_number varchar(10),
@@ -21,7 +21,7 @@ CREATE TABLE course_user(
 );
 
 CREATE TABLE course_section(
-  id bigserial PRIMARY KEY,
+  id serial PRIMARY KEY,
   -- course_code e.g. csc301
   course_code char(6) not null,
   -- e.g. intro to software enginerring
