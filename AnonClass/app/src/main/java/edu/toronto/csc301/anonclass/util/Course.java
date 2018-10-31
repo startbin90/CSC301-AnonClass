@@ -4,48 +4,69 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class Course implements EnclosedInfo {
-    private String courseCode;
-    private String sectionCode;
-    private String instructor;
-    private String location;
+    private String course_code;
+    private String course_name;
+    private String section_number;
+    private String instructor_email;
+    private String instructor_name;
+    private String locations;
 
-    public Course(String course, String section, String instructor, String location) {
-        courseCode = course;
-        sectionCode = section;
-        this.instructor = instructor;
-        this.location = location;
+    public Course(String course, String course_name, String section, String email, String instructor, String locations) {
+        course_code = course;
+        this.course_name = course_name;
+        section_number = section;
+        instructor_email = email;
+        this.instructor_name = instructor;
+        this.locations = locations;
     }
 
-    public String getCourseCode() {
-        return courseCode;
+    public String getCourse_code() {
+        return course_code;
     }
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
+    public void setCourse_code(String course_code) {
+        this.course_code = course_code;
     }
 
-    public String getSectionCode() {
-        return sectionCode;
+    public String getSection_number() {
+        return section_number;
     }
 
-    public void setSectionCode(String sectionCode) {
-        this.sectionCode = sectionCode;
+    public void setSection_number(String section_number) {
+        this.section_number = section_number;
     }
 
-    public String getInstructor() {
-        return instructor;
+    public String getInstructor_name() {
+        return instructor_name;
     }
 
-    public void setInstructor(String instructor) {
-        this.instructor = instructor;
+    public void setInstructor_name(String instructor_name) {
+        this.instructor_name = instructor_name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getLocations() {
+        return locations;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocations(String locations) {
+        this.locations = locations;
+    }
+
+
+    public String getCourse_name() {
+        return course_name;
+    }
+
+    public void setCourse_name(String course_name) {
+        this.course_name = course_name;
+    }
+
+    public String getInstructor_email() {
+        return instructor_email;
+    }
+
+    public void setInstructor_email(String instructor_email) {
+        this.instructor_email = instructor_email;
     }
 
     @Override
