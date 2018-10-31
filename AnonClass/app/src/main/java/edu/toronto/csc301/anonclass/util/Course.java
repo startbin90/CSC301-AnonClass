@@ -14,7 +14,7 @@ public class Course implements EnclosedInfo {
     private String section_number;
     private String instructor_email;
     private String instructor_name;
-    private Date date;
+    private Date time_created;
     private String locations;
 
     public static List<Course> getDummyCourses(){
@@ -26,13 +26,13 @@ public class Course implements EnclosedInfo {
         return lst;
     }
 
-    public Course(String course, String course_name, String section, String email, String instructor, Date date, String locations) {
+    public Course(String course, String course_name, String section, String email, String instructor, Date time_created, String locations) {
         course_code = course;
         this.course_name = course_name;
         section_number = section;
         instructor_email = email;
         this.instructor_name = instructor;
-        this.date = date;
+        this.time_created = time_created;
         this.locations = locations;
     }
 
@@ -85,12 +85,12 @@ public class Course implements EnclosedInfo {
         this.instructor_email = instructor_email;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getTime_created() {
+        return time_created;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setTime_created(Date time_created) {
+        this.time_created = time_created;
     }
 
 
@@ -101,7 +101,7 @@ public class Course implements EnclosedInfo {
     }
 
     public static Course deSerialize(String Json) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().create();
         return gson.fromJson(Json, Course.class);
     }
 }

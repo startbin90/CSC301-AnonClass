@@ -125,7 +125,7 @@ public class User implements EnclosedInfo{
     }
 
     public static User deSerialize(String Json) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().create();
         return gson.fromJson(Json, User.class);
     }
 }
