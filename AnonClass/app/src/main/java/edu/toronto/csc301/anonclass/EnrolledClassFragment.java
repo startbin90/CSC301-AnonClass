@@ -2,27 +2,22 @@ package edu.toronto.csc301.anonclass;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
-import edu.toronto.csc301.anonclass.dummy.DummyContent;
-import edu.toronto.csc301.anonclass.dummy.DummyContent.DummyItem;
-import edu.toronto.csc301.anonclass.util.Course;
-import edu.toronto.csc301.anonclass.util.User;
-import edu.toronto.csc301.anonclass.util.retMsg;
-
-import java.util.ArrayList;
 import java.util.List;
+
+import edu.toronto.csc301.anonclass.util.Course;
 
 /**
  * A fragment representing a list of Items.
@@ -72,6 +67,32 @@ public class EnrolledClassFragment extends Fragment {
             }
             recyclerView.setAdapter(new MyEnrolledClassRecyclerViewAdapter(mListener.onRequestCourses(), mListener));
         }
+        Button create = view.findViewById(R.id.create);
+        Button enroll = view.findViewById(R.id.enroll);
+        if (mListener.isUserStudent()){
+            create.setVisibility(View.GONE);
+            enroll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager manager = getFragmentManager();
+                    BottomSheetDialogFragment bottomSheet = JoinClassFragment.newInstance();
+                    assert manager != null: "getFragmentManager failed, get null object instead";
+                    bottomSheet.show(manager, "CreateClassFragment");
+                }
+            });
+        } else {
+            enroll.setVisibility(View.GONE);
+            create.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager manager = getFragmentManager();
+                    BottomSheetDialogFragment bottomSheet = CreateClassFragment.newInstance();
+
+                    assert manager != null: "getFragmentManager failed, get null object instead";
+                    bottomSheet.show(manager, "JoinClassFragment");
+                }
+            });
+        }
         mRefreshLayout = view.findViewById(R.id.account_detail_swipeRefreshLayout);
         mRefreshLayout.setColorSchemeResources(
                 R.color.colorPrimary
@@ -119,6 +140,7 @@ public class EnrolledClassFragment extends Fragment {
         void onRefreshInfo();
         void onClassClicked(Course course);
         List<Course> onRequestCourses();
+        boolean isUserStudent();
     }
 
 }

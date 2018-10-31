@@ -1,5 +1,6 @@
 package edu.toronto.csc301.anonclass;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,18 +9,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
 
-import edu.toronto.csc301.anonclass.dummy.DummyContent;
 import edu.toronto.csc301.anonclass.util.Course;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
 public class AnonClassActivity extends AppCompatActivity
-        implements EnrolledClassFragment.OnListFragmentInteractionListener {
+        implements EnrolledClassFragment.OnListFragmentInteractionListener,
+        CreateClassFragment.OnFragmentInteractionListener,
+        JoinClassFragment.OnFragmentInteractionListener{
 
     /**
      * current fragment loaded
@@ -107,10 +108,25 @@ public class AnonClassActivity extends AppCompatActivity
         return user.getCourses();
     }
 
+    @Override
+    public boolean isUserStudent() {
+        return user.getIsStudent();
+    }
+
     private void postExecute(){
         if (current_fragment instanceof EnrolledClassFragment){
             ((EnrolledClassFragment) current_fragment).onRefreshFinished();
         }
+    }
+
+    @Override
+    public void onFragmentInteraction() {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     /**
@@ -135,7 +151,7 @@ public class AnonClassActivity extends AppCompatActivity
                 return null;
             }
             User user = User.userFromServer("csc301@test.com", "abcde123",
-                    "Henry", "Liao",true, Course.getDummyCourses());
+                    "Henry", "Liao",false, Course.getDummyCourses());
 
             return new retMsg(0, user);
         }

@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class User implements EnclosedInfo{
     private String email;

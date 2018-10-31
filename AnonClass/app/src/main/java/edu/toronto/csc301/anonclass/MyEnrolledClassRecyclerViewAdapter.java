@@ -6,12 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import edu.toronto.csc301.anonclass.EnrolledClassFragment.OnListFragmentInteractionListener;
-import edu.toronto.csc301.anonclass.dummy.DummyContent.DummyItem;
-import edu.toronto.csc301.anonclass.util.Course;
-
 import java.util.Date;
 import java.util.List;
+
+import edu.toronto.csc301.anonclass.EnrolledClassFragment.OnListFragmentInteractionListener;
+import edu.toronto.csc301.anonclass.util.Course;
 
 /**
 
