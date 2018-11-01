@@ -4,6 +4,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.Socket;
 import java.sql.*;
+import java.text.ParseException;
 import java.util.HashSet;
 
 public class MyRunnable implements Runnable {
@@ -23,28 +24,25 @@ public class MyRunnable implements Runnable {
             AnnonclassDataBase db = new AnnonclassDataBase();
             db.connectDB("jdbc:postgresql://localhost:5432/anonclass");
             String request = in.readLine();
+            JSONObject info  = new JSONObject(in.readLine());
             try {
                 if (request.equals("Sign up")) {
-                    String info = in.readLine();
-                    JSONObject obj = new JSONObject(info);
-                    int res = db.signup(obj);
+                    int res = db.signup(info);
                     out.println(res);
                 } else if (request.equals("Log in")) {
-                    String info = in.readLine();
-                    JSONObject obj = new JSONObject(info);
-
-                    JSONArray ar = db.login(obj);
-                    if (ar == null) {
+                    JSONObject user = db.login(info);
+                    if (user == null) {
                         out.println(1);
+                        out.println("Error");
                     } else {
                         out.println(0);
-                        out.println(ar);
+                        out.println(user);
                     }
                 } else if (request.equals("enroll")) {
-                    // .....
-
+                    out.println(db.enroll_course(info));
+                } else if (request.equals("create")) {
+                    out.println(db.addCourse(info));
                 } else if (request.equals("ask")) {
-                    // broadcast message to all clients
                     try {
                         StringBuilder s = new StringBuilder();
                         String line;
@@ -58,13 +56,22 @@ public class MyRunnable implements Runnable {
                         }
                     } catch (IOException disconnected) {
                         // socket disconnect
-
                         System.out.println("disconnected");
                     }
-
+                } else if (request.equals("Display courses")) {
+                    JSONArray ar = db.display(info);
+                    if (ar.isEmpty()) {
+                        out.println(1);
+                        out.println("Error");
+                    } else {
+                        out.println(0);
+                        out.println(ar);
+                    }
                 }
             } catch (SQLException unhandled) {
                 unhandled.printStackTrace();
+            } catch (ParseException unhandled2) {
+                unhandled2.printStackTrace();
             }
             db.disconnectDB();
         } catch(IOException e) {
@@ -76,6 +83,4 @@ public class MyRunnable implements Runnable {
             System.exit(1);
         }
     }
-
-
 }
