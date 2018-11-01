@@ -7,7 +7,7 @@ public class SocketServer {
     private int portNumber = 30000;
     private ServerSocket serverSocket;
     private HashSet<Socket> clients = new HashSet<Socket>();
-    public void runserver() {
+    public void runServer() {
         try {
             serverSocket = new ServerSocket(portNumber);
         } catch(IOException e) {

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Course;
@@ -29,7 +30,7 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
 
     private OnFragmentInteractionListener mListener;
     private int mColumnCount = 2;
-    private List<Course> searched = Course.getDummyCourses();
+    private List<Course> searched = new ArrayList<>();
     private searchClassTask mSearchTask;
     private MyEnrolledClassRecyclerViewAdapter mAdapter;
 
@@ -42,7 +43,8 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
     }
 
     public void updateSearched(List<Course> lst){
-        searched = lst;
+        searched.clear();
+        searched.addAll(lst);
         mAdapter.notifyDataSetChanged();
     }
 

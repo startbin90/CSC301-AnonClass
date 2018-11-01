@@ -55,7 +55,7 @@ public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyE
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mEnrolledClassListener.onClassClickedFromEnrolledClassFragment(holder.mItem);
-                } else {
+                } else if (mJoinClassListener != null){
                     mJoinClassListener.onClassClickedFromJoinClassFragment(holder.mItem);
                 }
             }
