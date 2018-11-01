@@ -1,6 +1,5 @@
 package edu.toronto.csc301.anonclass;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +27,7 @@ public class AnonClassActivity extends AppCompatActivity
     private Fragment current_fragment = null;
     private User user;
     private GetEnrolledClassTask mGetInfoTask;
+    private JoinClassTask mJoinClassTask;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -93,14 +93,27 @@ public class AnonClassActivity extends AppCompatActivity
         mGetInfoTask.execute((Void) null);
     }
 
+    private void attemptJoinClass(Course course) {
+        if (mJoinClassTask!= null) {
+            return;
+        }
+
+        mJoinClassTask = new JoinClassTask(user.getEmail(), course.getCourse_id());
+        mJoinClassTask.execute((Void) null);
+    }
+
     @Override
     public void onRefreshInfo() {
         attemptGetInfo();
     }
 
     @Override
-    public void onClassClicked(Course course) {
+    public void onClassClickedFromEnrolledClassFragment(Course course) {
+        if (user.getStudentFlag()){
 
+        } else {
+
+        }
     }
 
     @Override
@@ -110,7 +123,7 @@ public class AnonClassActivity extends AppCompatActivity
 
     @Override
     public boolean isUserStudent() {
-        return user.getIsStudent();
+        return user.getStudentFlag();
     }
 
     private void postExecute(){
@@ -120,15 +133,66 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction() {
-
+    public User requestUserInfoFromCreateClassFrag() {
+        return user;
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onRequestRefreshFromCreateClassFrag() {
+        attemptGetInfo();
     }
 
+    @Override
+    public void onClassClickedFromJoinClassFragment(Course course) {
+        attemptJoinClass(course);
+    }
+
+    /**
+     * Represents an asynchronous task requesting join a class
+     */
+    public class JoinClassTask extends AsyncTask<Void, Void, retMsg> {
+
+        private final String mEmail;
+        private final int course_id;
+
+        JoinClassTask(String email, int course_id) {
+            this.mEmail = email;
+            this.course_id = course_id;
+        }
+
+        @Override
+        protected retMsg doInBackground(Void... params) {
+            // TODO: mEmail attempt to request join course_id, expect success or fail
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return null;
+            }
+
+            return retMsg.getErrorRet(0);
+        }
+
+        @Override
+        protected void onPostExecute(final retMsg ret) {
+            mGetInfoTask = null;
+
+            if (ret.getErrorCode() == 0) {
+                AnonClassActivity.this.attemptGetInfo();
+
+            } else {
+                Toast.makeText(AnonClassActivity.this, "get info failed", Toast.LENGTH_SHORT).show();
+            }
+            postExecute();
+        }
+
+        @Override
+        protected void onCancelled() {
+            mGetInfoTask = null;
+            //showProgress(false);
+        }
+    }
     /**
      * Represents an asynchronous task getting users enrolled class or created class
      */
@@ -142,7 +206,7 @@ public class AnonClassActivity extends AppCompatActivity
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+            // TODO: attempt to get enrolled courses, expect to get a user object
 
             try {
                 // Simulate network access.
@@ -153,7 +217,7 @@ public class AnonClassActivity extends AppCompatActivity
             User user = User.userFromServer("csc301@test.com", "abcde123",
                     "Henry", "Liao",false, Course.getDummyCourses());
 
-            return new retMsg(0, user);
+            return retMsg.getUserRet(0, user);
         }
 
         @Override

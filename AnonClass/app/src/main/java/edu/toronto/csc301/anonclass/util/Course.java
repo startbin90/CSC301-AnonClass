@@ -9,53 +9,113 @@ import java.util.List;
 
 public class Course implements EnclosedInfo {
 
-    private String courseCode;
-    private String courseName;
-    private String sectionNum;
-    private String instructorName;
-    private Date time;
-    private String location;
+    private int course_id;
+    private String course_code;
+    private String course_name;
+    private String section_number;
+    private String instructor_email;
+    private String instructor_name;
+    private Date time_created;
+    private String locations;
 
     public static List<Course> getDummyCourses(){
         List<Course> lst = new ArrayList<>();
-        lst.add(new Course("csc301","Intro to Software Engineering",
-                "L0101", "Mark", new Date(), "BA 1210"));
-        lst.add(new Course("csc324","Principle of Programming Language",
-                "L0101", "David", new Date(), "SS 1234"));
+        lst.add(new Course(1, "csc301","Intro to Software Engineering",
+                "L0101", "emailM","Mark", new Date(), "BA 1210"));
+        lst.add(new Course(2,"csc324","Principle of Programming Language",
+                "L0101", "emailD","David", new Date(), "SS 1234"));
         return lst;
     }
 
-    public Course(String courseCode, String courseName, String sectionNum, String instructorName, Date time, String location) {
-        this.courseCode = courseCode;
-        this.courseName = courseName;
-        this.sectionNum = sectionNum;
-        this.instructorName = instructorName;
-        this.time = time;
-        this.location = location;
+    public static Course getCreatedCourse(String course_code, String course_name, String section,
+                                          String email, String instructor, String locations){
+        return new Course(course_code, course_name, section, email, instructor, new Date(), locations);
+    }
+
+    private Course(String course, String course_name, String section, String email, String instructor, Date time_created, String locations) {
+        this.course_code = course;
+        this.course_name = course_name;
+        this.section_number = section;
+        this.instructor_email = email;
+        this.instructor_name = instructor;
+        this.time_created = time_created;
+        this.locations = locations;
+    }
+
+    private Course(int course_id, String course_code, String course_name, String section_number, String instructor_email, String instructor_name, Date time_created, String locations) {
+        this.course_id = course_id;
+        this.course_code = course_code;
+        this.course_name = course_name;
+        this.section_number = section_number;
+        this.instructor_email = instructor_email;
+        this.instructor_name = instructor_name;
+        this.time_created = time_created;
+        this.locations = locations;
+    }
+
+    public int getCourse_id() {
+        return course_id;
+    }
+
+    public void setCourse_id(int course_id) {
+        this.course_id = course_id;
     }
 
     public String getCourse_code() {
         return course_code;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public void setCourse_code(String course_code) {
+        this.course_code = course_code;
     }
 
-    public String getSectionNum() {
-        return sectionNum;
+    public String getSection_number() {
+        return section_number;
     }
 
-    public String getInstructorName() {
-        return instructorName;
+    public void setSection_number(String section_number) {
+        this.section_number = section_number;
     }
 
-    public Date getTime() {
-        return time;
+    public String getInstructor_name() {
+        return instructor_name;
+    }
+
+    public void setInstructor_name(String instructor_name) {
+        this.instructor_name = instructor_name;
     }
 
     public String getLocations() {
         return locations;
+    }
+
+    public void setLocations(String locations) {
+        this.locations = locations;
+    }
+
+
+    public String getCourse_name() {
+        return course_name;
+    }
+
+    public void setCourse_name(String course_name) {
+        this.course_name = course_name;
+    }
+
+    public String getInstructor_email() {
+        return instructor_email;
+    }
+
+    public void setInstructor_email(String instructor_email) {
+        this.instructor_email = instructor_email;
+    }
+
+    public Date getTime_created() {
+        return time_created;
+    }
+
+    public void setTime_created(Date time_created) {
+        this.time_created = time_created;
     }
 
 
@@ -66,7 +126,7 @@ public class Course implements EnclosedInfo {
     }
 
     public static Course deSerialize(String Json) {
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().create();
         return gson.fromJson(Json, Course.class);
     }
 }

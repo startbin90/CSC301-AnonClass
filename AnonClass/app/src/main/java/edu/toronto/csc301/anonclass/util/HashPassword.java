@@ -13,7 +13,6 @@ public class HashPassword {
             messageDigest.update(password.getBytes());
             byte[] md = messageDigest.digest();
 
-
             // change array of bytes to hex
             return new BigInteger(1, md).toString(16);
 
