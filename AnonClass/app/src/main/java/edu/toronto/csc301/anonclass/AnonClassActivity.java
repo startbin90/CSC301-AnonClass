@@ -4,7 +4,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -19,7 +21,8 @@ import edu.toronto.csc301.anonclass.util.retMsg;
 public class AnonClassActivity extends AppCompatActivity
         implements EnrolledClassFragment.OnListFragmentInteractionListener,
         CreateClassFragment.OnFragmentInteractionListener,
-        JoinClassFragment.OnFragmentInteractionListener{
+        JoinClassFragment.OnFragmentInteractionListener,
+        ClassStarterFragment.OnClassStarterFragmentInteractionListener{
 
     /**
      * current fragment loaded
@@ -109,11 +112,10 @@ public class AnonClassActivity extends AppCompatActivity
 
     @Override
     public void onClassClickedFromEnrolledClassFragment(Course course) {
-        if (user.getStudentFlag()){
-
-        } else {
-
-        }
+        FragmentManager manager = getSupportFragmentManager();
+        BottomSheetDialogFragment bottomSheet = ClassStarterFragment.newInstance(user, course);
+        assert manager != null: "getFragmentManager failed, get null object instead";
+        bottomSheet.show(manager, "ClassStarterFragment");
     }
 
     @Override
@@ -146,6 +148,12 @@ public class AnonClassActivity extends AppCompatActivity
     public void onClassClickedFromJoinClassFragment(Course course) {
         attemptJoinClass(course);
     }
+
+    @Override
+    public void onFragmentInteractionFromClassStarterFrag() {
+
+    }
+
 
     /**
      * Represents an asynchronous task requesting join a class
