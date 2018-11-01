@@ -1,6 +1,5 @@
 package edu.toronto.csc301.anonclass;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -99,7 +98,7 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClassClicked(Course course) {
+    public void onClassClickedFromEnrolledClassFragment(Course course) {
 
     }
 
@@ -110,7 +109,7 @@ public class AnonClassActivity extends AppCompatActivity
 
     @Override
     public boolean isUserStudent() {
-        return user.getIsStudent();
+        return user.getStudentFlag();
     }
 
     private void postExecute(){
@@ -120,14 +119,15 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction() {
+    public void onFragmentInteractionFromCreateClassFragment() {
 
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onClassClickedFromJoinClassFragment(Course course) {
 
     }
+
 
     /**
      * Represents an asynchronous task getting users enrolled class or created class
@@ -151,9 +151,9 @@ public class AnonClassActivity extends AppCompatActivity
                 return null;
             }
             User user = User.userFromServer("csc301@test.com", "abcde123",
-                    "Henry", "Liao",false, Course.getDummyCourses());
+                    "Henry", "Liao",true, Course.getDummyCourses());
 
-            return new retMsg(0, user);
+            return retMsg.getUserRet(0, user);
         }
 
         @Override
