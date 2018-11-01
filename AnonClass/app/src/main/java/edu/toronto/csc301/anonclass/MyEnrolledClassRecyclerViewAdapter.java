@@ -18,11 +18,19 @@ import edu.toronto.csc301.anonclass.util.Course;
 public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyEnrolledClassRecyclerViewAdapter.ViewHolder> {
 
     private final List<Course> mCourses;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnListFragmentInteractionListener mEnrolledClassListener;
+    private final JoinClassFragment.OnFragmentInteractionListener mJoinClassListener;
 
     public MyEnrolledClassRecyclerViewAdapter(List<Course> items, OnListFragmentInteractionListener listener) {
         mCourses = items;
-        mListener = listener;
+        mJoinClassListener = null;
+        mEnrolledClassListener = listener;
+    }
+
+    public MyEnrolledClassRecyclerViewAdapter(List<Course> items, JoinClassFragment.OnFragmentInteractionListener listener) {
+        mCourses = items;
+        mEnrolledClassListener = null;
+        mJoinClassListener = listener;
     }
 
     @Override
@@ -35,21 +43,24 @@ public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyE
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mCourses.get(position);
-        holder.mCourse.setText(mCourses.get(position).getCourseCode());
-        holder.mSection.setText(mCourses.get(position).getSectionNum());
-        holder.mInstructor.setText(mCourses.get(position).getInstructorName());
-        Date date = mCourses.get(position).getTime();
+        holder.mCourse.setText(mCourses.get(position).getCourse_code());
+        holder.mSection.setText(mCourses.get(position).getSection_number());
+        holder.mInstructor.setText(mCourses.get(position).getInstructor_name());
+        Date date = mCourses.get(position).getTime_created();
         holder.mTime.setText(date.toString());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (null != mEnrolledClassListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onClassClicked(holder.mItem);
+                    mEnrolledClassListener.onClassClickedFromEnrolledClassFragment(holder.mItem);
+                } else {
+                    mJoinClassListener.onClassClickedFromJoinClassFragment(holder.mItem);
                 }
             }
         });
+
     }
 
     @Override
