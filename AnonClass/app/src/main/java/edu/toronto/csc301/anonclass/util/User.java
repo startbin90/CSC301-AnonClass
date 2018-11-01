@@ -3,18 +3,18 @@ package edu.toronto.csc301.anonclass.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class User implements EnclosedInfo{
     private String email;
-    private String password;
-    private String UTORid;
+    private String pwdHash;
+    private String utorid;
     private String firstName;
     private String lastName;
-    private Boolean isStudent;
+    private Boolean studentFlag;
 
-    private Set<Course> courses = new HashSet<>();
+    private List<Course> courses = new ArrayList<>();
 
     public static User getLoginUserObj(String email, String pwd) {
         return new User(email, pwd);
@@ -26,31 +26,34 @@ public class User implements EnclosedInfo{
     }
 
     public static User userFromServer(String email, String UTORid,
-                                          String firstName, String lastName, boolean isStudent) {
-        return new User(email, UTORid, firstName, lastName, isStudent);
+                                          String firstName, String lastName, boolean isStudent,
+                                      List<Course> courses) {
+        return new User(email, UTORid, firstName, lastName, isStudent, courses);
     }
 
     private User(String email, String password) {
         this.email = email;
-        this.password = password;
+        this.pwdHash = HashPassword.hash(password);
     }
 
     private User(String email, String UTORid,
-                String firstName, String lastName, boolean isStudent) {
+                String firstName, String lastName, boolean isStudent, List<Course> courses) {
         this.email = email;
-        this.UTORid = UTORid;
+        this.utorid = utorid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isStudent = isStudent;
+        this.courses = courses;
+
     }
-    private User(String email, String pwd, String UTORid,
-                 String firstName, String lastName, boolean isStudent) {
+    private User(String email, String pwd, String utorid,
+                 String firstName, String lastName, boolean studentFlag) {
         this.email = email;
-        this.password = pwd;
-        this.UTORid = UTORid;
+        this.pwdHash = HashPassword.hash(pwd);
+        this.utorid = utorid;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.isStudent = isStudent;
+        this.studentFlag = studentFlag;
     }
 
 
@@ -62,20 +65,20 @@ public class User implements EnclosedInfo{
         this.email = email;
     }
 
-    public String getUTORid() {
-        return UTORid;
+    public String getUtorid() {
+        return utorid;
     }
 
-    public void setUTORid(String UTORid) {
-        this.UTORid = UTORid;
+    public void setUtorid(String utorid) {
+        this.utorid = utorid;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPwdHash() {
+        return pwdHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPwdHash(String pwdHash) {
+        this.pwdHash = HashPassword.hash(pwdHash);
     }
 
     public String getFirstName() {
@@ -94,19 +97,19 @@ public class User implements EnclosedInfo{
         this.lastName = lastName;
     }
 
-    public Boolean getIsStudent() {
-        return isStudent;
+    public Boolean getStudentFlag() {
+        return studentFlag;
     }
 
-    public void setIsStudent(Boolean teacher) {
-        isStudent = teacher;
+    public void setStudentFlag(Boolean teacher) {
+        studentFlag = teacher;
     }
 
     public void addCourse(Course course) {
         courses.add(course);
     }
 
-    public Set<Course> getCourses() {
+    public List<Course> getCourses() {
         return courses;
     }
 
@@ -121,8 +124,7 @@ public class User implements EnclosedInfo{
         return gson.toJson(this);
     }
 
-    @Override
-    public EnclosedInfo deSerialize(String Json) {
+    public static User deSerialize(String Json) {
         Gson gson = new Gson();
         return gson.fromJson(Json, User.class);
     }
