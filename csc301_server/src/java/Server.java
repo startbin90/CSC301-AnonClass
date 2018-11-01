@@ -1,12 +1,8 @@
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.sql.Connection;
 
 public class Server {
     public static void main(String[] args) throws Exception{
         SocketServer sc = new SocketServer();
-        sc.runserver();
+        sc.runServer();
 
 //        AnnonclassDataBase db = new AnnonclassDataBase();
 //        db.connectDB("jdbc:postgresql://localhost:5432/anonclass");
@@ -29,6 +25,7 @@ public class Server {
 //        info3.put("course_name", "course1");
 //        info3.put("section_number", "section1");
 //        System.out.println(db.enroll_course(info3));
+
 
 
     }
