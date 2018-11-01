@@ -336,7 +336,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
             User user = User.userFromServer("csc301@test.com", "abcde123",
-                    "Henry", "Liao",true, Course.getDummyCourses());
+                    "Henry", "Liao",false, Course.getDummyCourses());
 
             return retMsg.getUserRet(0, user);
         }
