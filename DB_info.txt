@@ -8,8 +8,8 @@ DB information
 *  5432                                                *
 *                                                      *
 *  Username                                            *
-*  A27F8705CC93F2A4EB6DAD33EECE8BDF                    *
+*  anonadmin                    *
 *                                                      *
 *  Password                                            *
-*  AA19A7C000CE3224021231312FF2E95F                    *
+*  anonpassword                    *
 ********************************************************

@@ -3,18 +3,21 @@ package edu.toronto.csc301.anonclass;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import edu.toronto.csc301.anonclass.dummy.DummyContent;
-import edu.toronto.csc301.anonclass.dummy.DummyContent.DummyItem;
+import android.widget.Button;
 
 import java.util.List;
+
+import edu.toronto.csc301.anonclass.util.Course;
 
 /**
  * A fragment representing a list of Items.
@@ -28,6 +31,7 @@ public class EnrolledClassFragment extends Fragment {
     private int mColumnCount = 2;
     private Activity context;
     private OnListFragmentInteractionListener mListener;
+    private SwipeRefreshLayout mRefreshLayout;
 
     public static EnrolledClassFragment newInstance(Activity act){
         EnrolledClassFragment instance = new EnrolledClassFragment();
@@ -48,7 +52,7 @@ public class EnrolledClassFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_enrolledclass_list, container, false);
         View found = view.findViewById(R.id.enrolled_class_list);
@@ -61,11 +65,53 @@ public class EnrolledClassFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyEnrolledClassRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyEnrolledClassRecyclerViewAdapter(mListener.onRequestCourses(), mListener));
         }
+        Button create = view.findViewById(R.id.create);
+        Button enroll = view.findViewById(R.id.enroll);
+        if (mListener.isUserStudent()){
+            create.setVisibility(View.GONE);
+            enroll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager manager = getFragmentManager();
+                    BottomSheetDialogFragment bottomSheet = JoinClassFragment.newInstance();
+                    assert manager != null: "getFragmentManager failed, get null object instead";
+                    bottomSheet.show(manager, "CreateClassFragment");
+                }
+            });
+        } else {
+            enroll.setVisibility(View.GONE);
+            create.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FragmentManager manager = getFragmentManager();
+                    BottomSheetDialogFragment bottomSheet = CreateClassFragment.newInstance();
+
+                    assert manager != null: "getFragmentManager failed, get null object instead";
+                    bottomSheet.show(manager, "JoinClassFragment");
+                }
+            });
+        }
+        mRefreshLayout = view.findViewById(R.id.account_detail_swipeRefreshLayout);
+        mRefreshLayout.setColorSchemeResources(
+                R.color.colorPrimary
+                , R.color.green
+                , R.color.dividerGrey
+                , R.color.colorAccent);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mRefreshLayout.setRefreshing(true);
+                mListener.onRefreshInfo();
+            }
+        });
         return view;
     }
 
+    void onRefreshFinished(){
+        mRefreshLayout.setRefreshing(false);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -89,13 +135,12 @@ public class EnrolledClassFragment extends Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onRefreshInfo();
+        void onClassClickedFromEnrolledClassFragment(Course course);
+        List<Course> onRequestCourses();
+        boolean isUserStudent();
     }
+
 }

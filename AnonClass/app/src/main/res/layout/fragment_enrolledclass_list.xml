@@ -27,14 +27,22 @@
             style="?android:attr/buttonBarButtonStyle"/>
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/enrolled_class_list"
-        android:name="edu.toronto.csc301.anonclass.EnrolledClassFragment"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/account_detail_swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:context=".EnrolledClassFragment"
-        tools:listitem="@layout/fragment_enrolledclass" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/enrolled_class_list"
+            android:name="edu.toronto.csc301.anonclass.EnrolledClassFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".EnrolledClassFragment"
+            tools:listitem="@layout/fragment_enrolledclass" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </LinearLayout>

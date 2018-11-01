@@ -5,22 +5,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".registerActivity">
+    tools:context=".AnonClassActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/signIn_registerForm"
+            android:id="@+id/createClassForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="visible"
-            >
+            android:visibility="visible">
 
             <TextView
-                android:id="@+id/signIn_fill"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -29,92 +27,56 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="28dp"
-                android:text="@string/register_prompt"
+                android:text="@string/create_class"
                 android:textSize="24sp" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/email_layout"
+                android:id="@+id/course_codeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:errorEnabled="true"
                 app:errorTextAppearance="@style/ErrorText"
                 app:counterEnabled="true"
-                app:counterMaxLength="50"
-                >
+                app:counterMaxLength="6">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/signIn_emailField"
-                    android:layout_width="match_parent"
+                    android:id="@+id/course_codeField"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/email"
-                    android:inputType="textEmailAddress"
-                    android:maxLength="50"
-                    />
+                    android:hint="@string/course_code"
+                    android:inputType="text"
+                    android:maxLength="6"
+                    android:ems="6" />
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/utorid_layout"
+                android:id="@+id/course_nameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:errorEnabled="true"
                 app:errorTextAppearance="@style/ErrorText"
                 app:counterEnabled="true"
-                app:counterMaxLength="8"
+                app:counterMaxLength="40"
                 android:gravity="start"
                 >
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/signIn_utoridField"
+                    android:id="@+id/course_nameField"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/utorid"
+                    android:hint="@string/course_name"
                     android:inputType="text"
-                    android:ems="10"
-                    android:maxLength="8"
+                    android:ems="40"
+                    android:maxLength="40"
                     />
 
             </android.support.design.widget.TextInputLayout>
 
-
-            <RadioGroup
-                android:id="@+id/signIn_studentFlag"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
-
-                <RadioButton
-                    android:id="@+id/signIn_student"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="70dp"
-                    android:layout_weight="1"
-                    android:text="@string/student"
-                    tools:layout_editor_absoluteX="76dp"
-                    tools:layout_editor_absoluteY="248dp"
-                    android:layout_marginStart="70dp"
-
-                    />
-
-                <RadioButton
-                    android:id="@+id/signIn_teacher"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="50dp"
-                    android:layout_weight="1"
-                    android:text="@string/instructor"
-                    tools:layout_editor_absoluteX="232dp"
-                    tools:layout_editor_absoluteY="248dp"
-                    android:layout_marginEnd="50dp" />
-
-            </RadioGroup>
-
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/firstName_layout"
+                android:id="@+id/section_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -125,11 +87,11 @@
                 app:errorTextAppearance="@style/ErrorText">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/signIn_firstNameField"
+                    android:id="@+id/sectionField"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="15"
-                    android:hint="@string/first_name"
+                    android:ems="10"
+                    android:hint="@string/section"
                     android:inputType="text"
                     android:maxLength="10" />
 
@@ -137,7 +99,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/lastName_layout"
+                android:id="@+id/location_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
@@ -148,65 +110,19 @@
                 app:errorTextAppearance="@style/ErrorText">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/signIn_lastNameField"
+                    android:id="@+id/locationField"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/last_name"
+                    android:ems="20"
+                    android:hint="@string/location"
                     android:inputType="text"
-                    android:maxLength="10" />
-
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/password_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:orientation="vertical"
-                app:counterEnabled="true"
-                app:counterMaxLength="20"
-                app:errorEnabled="true"
-                app:errorTextAppearance="@style/ErrorText"
-                app:passwordToggleEnabled="true">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/signIn_pwdField"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="20"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
                     android:maxLength="20" />
 
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/password_confirm_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:orientation="vertical"
-                app:counterEnabled="true"
-                app:counterMaxLength="20"
-                app:errorEnabled="true"
-                app:errorTextAppearance="@style/ErrorText">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/signIn_pwdconfirmField"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="20"
-                    android:hint="@string/confirm_password"
-                    android:inputType="textPassword"
-                    android:maxLength="20" />
 
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/signIn_submit"
+                android:id="@+id/submit"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_gravity="end"
