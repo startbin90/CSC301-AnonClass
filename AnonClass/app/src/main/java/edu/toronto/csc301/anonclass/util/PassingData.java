@@ -44,12 +44,12 @@ public class PassingData {
         if (results != null) {
             int error = Integer.parseInt(results.get(0));
             if (error == 1) {
-                return new retMsg(error, null);
+                return retMsg.getErrorRet(error);
             }
 
             User fullUser = User.deSerialize(results.get(1));
 
-            return new retMsg(error, fullUser);
+            return retMsg.getUserRet(error, fullUser);
         } else {
             return null;
         }
@@ -63,12 +63,12 @@ public class PassingData {
         if (results != null) {
             int error = Integer.parseInt(results.get(0));
             if (error == 1) {
-                return new retMsg(error, null);
+                return retMsg.getErrorRet(error);
             }
 
             User user = User.deSerialize(results.get(1));
 
-            return new retMsg(error, user);
+            return retMsg.getUserRet(error, user);
         } else {
             return null;
         }

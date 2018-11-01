@@ -138,7 +138,7 @@ public class EnrolledClassFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         void onRefreshInfo();
-        void onClassClicked(Course course);
+        void onClassClickedFromEnrolledClassFragment(Course course);
         List<Course> onRequestCourses();
         boolean isUserStudent();
     }
