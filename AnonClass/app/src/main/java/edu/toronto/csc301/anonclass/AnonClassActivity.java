@@ -76,8 +76,13 @@ public class AnonClassActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anon_class);
+        String json;
+        if (savedInstanceState != null){
+            json = savedInstanceState.getString("user");
+        } else {
+            json = getIntent().getStringExtra("user");
+        }
 
-        String json = getIntent().getStringExtra("user");
         this.user = User.deSerialize(json);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -103,6 +108,22 @@ public class AnonClassActivity extends AppCompatActivity
 
         mJoinClassTask = new JoinClassTask(user.getEmail(), course.getCourse_id());
         mJoinClassTask.execute((Void) null);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        System.out.println("onSaveInstanceState");
+        savedInstanceState.putString("user", user.serialize());
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        System.out.println("onRestoreInstanceState");
     }
 
     @Override

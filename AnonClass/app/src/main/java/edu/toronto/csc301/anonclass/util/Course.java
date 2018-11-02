@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Course implements EnclosedInfo {
 
@@ -110,14 +112,30 @@ public class Course implements EnclosedInfo {
         this.instructor_email = instructor_email;
     }
 
-    public Date getTime_created() {
-        return time_created;
+    public String getTime_created() {
+        return translate(time_created);
     }
 
     public void setTime_created(Date time_created) {
         this.time_created = time_created;
     }
 
+    public String translate(Date d) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(d);
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
+        String s = "";
+        if (1 <= month && month <= 4) {
+            s = s + "Winter ";
+        } else if (5 <= month && month <= 8) {
+            s = s + "Summer ";
+        } else if (9 <= month && month <= 12) {
+            s = s + "Fall ";
+        }
+        s = s + String.format(Locale.CANADA, "%d", year);
+        return s;
+    }
 
     @Override
     public String serialize() {
