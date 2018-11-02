@@ -1,7 +1,6 @@
 package edu.toronto.csc301.anonclass;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
