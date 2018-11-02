@@ -7,7 +7,7 @@ public class Session {
     float latitude;
     float longitude;
 
-    public static Session requestSeesion(String email, Course course, float latitude, float longitude){
+    public static Session requestSession(String email, Course course, float latitude, float longitude){
         return new Session(email, course, latitude, longitude);
     }
     private Session(String email, Course course, float latitude, float longitude) {

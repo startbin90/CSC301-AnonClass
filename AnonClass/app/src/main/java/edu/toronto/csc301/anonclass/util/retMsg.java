@@ -10,7 +10,21 @@ public class retMsg implements EnclosedInfo {
     private int errorCode;
     private User user;
     private List<Course> searched;
+    private List<Question> questions;
+    private String stringExtra;
 
+    public static retMsg getStringExtraRet(int err, String str){
+        retMsg ret = new retMsg();
+        ret.setErrorCode(err);
+        ret.setStringExtra(str);
+        return ret;
+    }
+    public static retMsg getQuestionsRet(int err, List<Question> questions){
+        retMsg ret = new retMsg();
+        ret.setErrorCode(err);
+        ret.setQuestions(questions);
+        return ret;
+    }
     public static retMsg getErrorRet(int err){
         retMsg ret = new retMsg();
         ret.setErrorCode(err);
@@ -29,6 +43,19 @@ public class retMsg implements EnclosedInfo {
         ret.setErrorCode(err);
         ret.setSearched(lst);
         return ret;
+    }
+
+    public void setStringExtra(String stringExtra) {
+        this.stringExtra = stringExtra;
+    }
+
+    public List<Question> getQuestions() {
+
+        return questions;
+    }
+
+    public String getStringExtra() {
+        return stringExtra;
     }
 
     public int getErrorCode() {
@@ -53,6 +80,10 @@ public class retMsg implements EnclosedInfo {
 
     public void setSearched(List<Course> searched) {
         this.searched = searched;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 
     @Override

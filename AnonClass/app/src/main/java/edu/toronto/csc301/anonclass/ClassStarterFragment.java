@@ -140,7 +140,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
             return;
         }
 
-        mAttendClassTask = new attendClassTask(Session.requestSeesion(user.getEmail(), course, latitude, longitude));
+        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course, latitude, longitude));
         mAttendClassTask.execute((Void) null);
     }
 
@@ -163,7 +163,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to request join or open a class
+            // TODO: attempt to request join or open a class, expect a session number
 
             try {
                 // Simulate network access.
@@ -182,6 +182,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
             if (ret.getErrorCode() == 0) {
                 Intent launch = new Intent(ClassStarterFragment.this.getContext(),  InClassActivity.class);
                 launch.putExtra("user", user.serialize());
+                launch.putExtra("session_num", ret.getStringExtra());
                 ClassStarterFragment.this.startActivity(launch);
             } else {
                 Toast.makeText(ClassStarterFragment.this.getContext(),
