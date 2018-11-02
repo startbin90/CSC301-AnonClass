@@ -4,9 +4,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+
+import java.util.List;
+
+import edu.toronto.csc301.anonclass.util.Question;
 
 /**
  *
@@ -14,6 +23,9 @@ import android.view.ViewGroup;
 public class ChatRoomFragment extends Fragment {
 
     private OnChatRoomFragmentInteractionListener mListener;
+    private MyQuestionRecyclerViewAdapter adapter;
+    EditText message;
+
 
     public static ChatRoomFragment newInstance(){
         ChatRoomFragment frag = new ChatRoomFragment();
@@ -28,9 +40,30 @@ public class ChatRoomFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatroom, container, false);
+        View found = view.findViewById(R.id.question_list);
+        if (found instanceof RecyclerView){
+            Context context = view.getContext();
+            RecyclerView recyclerView = (RecyclerView) found;
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            adapter = new MyQuestionRecyclerViewAdapter(mListener.requestQuestions(), mListener);
+            recyclerView.setAdapter(adapter);
+
+        }
+        message = view.findViewById(R.id.chat_box);
+        Button send = view.findViewById(R.id.send);
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(message.getText().toString())){
+                    mListener.onSendClicked(message.getText().toString());
+                }
+            }
+        });
         return view;
     }
-
+    public void refreshList(){
+        adapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -56,6 +89,7 @@ public class ChatRoomFragment extends Fragment {
      * activity.
      */
     public interface OnChatRoomFragmentInteractionListener {
-        void onChatRoomFragmentInteraction(Uri uri);
+        void onSendClicked(String question);
+        List<Question> requestQuestions();
     }
 }

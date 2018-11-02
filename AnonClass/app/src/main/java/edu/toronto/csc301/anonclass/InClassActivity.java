@@ -1,6 +1,8 @@
 package edu.toronto.csc301.anonclass;
 
+import android.content.IntentSender;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import edu.toronto.csc301.anonclass.util.Question;
+import edu.toronto.csc301.anonclass.util.User;
+import edu.toronto.csc301.anonclass.util.retMsg;
 
 public class InClassActivity extends AppCompatActivity implements ChatRoomFragment.OnChatRoomFragmentInteractionListener{
 
@@ -28,12 +38,20 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private User user;
+    private String session;
+    private GetQuestionsTask mGetQuestionTask;
+    private SendQuestionTask mSendQuestionTask;
+    private List<Question> questions = new ArrayList<>();
+    private Fragment current_frag = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_class);
 
+        user = User.deSerialize(getIntent().getStringExtra("user"));
+        session = getIntent().getStringExtra("session_num");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -50,6 +68,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
+        attemptGetQuestions();
     }
 
 
@@ -77,8 +96,13 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
     }
 
     @Override
-    public void onChatRoomFragmentInteraction(Uri uri) {
+    public void onSendClicked(String question) {
+        attemptSendQuestion(new Question(user.getEmail(), question, new Date()));
+    }
 
+    @Override
+    public List<Question> requestQuestions() {
+        return questions;
     }
 
     /**
@@ -95,7 +119,19 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return ChatRoomFragment.newInstance();
+            switch (position){
+                case 0:
+                    Fragment frag = ChatRoomFragment.newInstance();
+                    current_frag = frag;
+                    return frag;
+                case 1:
+                    return ChatRoomFragment.newInstance();
+                case 2:
+                    return ChatRoomFragment.newInstance();
+                default:
+                    return ChatRoomFragment.newInstance();
+            }
+
         }
 
         @Override
@@ -104,4 +140,120 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
             return 3;
         }
     }
+
+    private void attemptGetQuestions() {
+        if (mGetQuestionTask != null) {
+            return;
+        }
+
+        mGetQuestionTask = new GetQuestionsTask(session);
+        mGetQuestionTask.execute((Void) null);
+    }
+
+    private void attemptSendQuestion(Question question) {
+        if (mSendQuestionTask != null) {
+            return;
+        }
+
+        mSendQuestionTask = new SendQuestionTask(session, question);
+        mSendQuestionTask.execute((Void) null);
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class SendQuestionTask extends AsyncTask<Void, Void, retMsg> {
+
+        private final String session;
+        private final Question question;
+
+        SendQuestionTask(String session, Question question) {
+            this.session = session;
+            this.question = question;
+        }
+
+        @Override
+        protected retMsg doInBackground(Void... params) {
+            // TODO: attempt to send a question to session
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return null;
+            }
+
+            return retMsg.getErrorRet(0);
+        }
+
+        @Override
+        protected void onPostExecute(final retMsg ret) {
+            mSendQuestionTask = null;
+            //showProgress(false);
+
+            if (ret.getErrorCode() == 0) {
+                InClassActivity.this.questions.add(question);
+                if (InClassActivity.this.current_frag instanceof ChatRoomFragment){
+                    ((ChatRoomFragment) InClassActivity.this.current_frag).refreshList();
+                    ((ChatRoomFragment) InClassActivity.this.current_frag).message.setText("");
+                }
+            } else {
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mSendQuestionTask = null;
+        }
+    }
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.
+     */
+    public class GetQuestionsTask extends AsyncTask<Void, Void, retMsg> {
+
+        private final String session;
+
+        GetQuestionsTask(String session) {
+            this.session = session;
+        }
+
+        @Override
+        protected retMsg doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return null;
+            }
+
+            return retMsg.getQuestionsRet(0, Question.getDummyQuestions());
+        }
+
+        @Override
+        protected void onPostExecute(final retMsg ret) {
+            mGetQuestionTask = null;
+            //showProgress(false);
+
+            if (ret.getErrorCode() == 0) {
+                InClassActivity.this.questions.clear();
+                InClassActivity.this.questions.addAll(ret.getQuestions());
+                if (InClassActivity.this.current_frag instanceof ChatRoomFragment){
+                    ((ChatRoomFragment) InClassActivity.this.current_frag).refreshList();
+                }
+            } else {
+
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mGetQuestionTask = null;
+        }
+    }
+
 }
