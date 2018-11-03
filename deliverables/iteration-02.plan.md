@@ -59,7 +59,6 @@ The master repo will be safer since a pull request must be viewed prior to merge
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to present your project idea.
  * A diagram to specify the structure:
  https://drive.google.com/file/d/1GR7aK73AYUETYMuEo-ROcDUCszYjHF_Y/view?usp=sharing
 
