@@ -1,9 +1,5 @@
 # Anonclass
 
- > _Note:_ This document is meant to be written during (or shortly after) your review meeting, which should happen fairly close to the due date.      
- >      
- > _Suggestion:_ Have your review meeting a day or two before the due date. This way you will have some time to go over (and edit) this document, and all team members should have a chance to make their contribution.
-
 
 ## Iteration 02 - Review & Retrospect
 
@@ -12,27 +8,25 @@
 
 ## Process - Reflection
 
-(Optional) Short introduction
 
 #### Decisions that turned out well
 
-List process-related (i.e. team organization) decisions that, in retrospect, turned out to be successful.
-
-* Let all objects that required transmission through socket implement one interface that contains that serialize/deserialize method. So we can convert between object and Json string conveniently.
+* Using Json to serialize/deserialize objects in order to transmit data between clients and server. We create an interface for all of these classes so that they must implement serialize method.
 * When passing data using socket, let the first line be protocol that server can read and decide which information to gather from database. Client can also read the error message to analyse following data. This makes communication clear and effective.
-* Each of the group member fork their own branch, and work on the directory they assigned to, so no much conflict occurred during implementation, which maintains a pretty good workflow and coding environment.
+* Each of the group member forks their own branch, and works on the directory they are assigned to, so there won't be many conflicts occurred during implementation, which maintains a pretty good workflow and coding environment.
 
 #### Decisions that did not turn out as well as we hoped
 
-* Assign only one group member to build front end, resulting that the app cannot display features as we designed.
-* Use Android app for both instructors and students. Too much burden on the front-end development.
+* Assigned only one group member to work on Android, resulting too much workload for that member and some features have to be dummy or postponed.
+* Planned to build a Android app for both instructors and students. Too much burden on the front-end development.
+* Tried to deploy Server and Database on AWS at the first but failed which wastes a lot of time. We could have test it locally first.
 
 
 #### Planned changes
 
-List any process-related changes you are planning to make (if there are any)
 
- * Move one or two more people to work on front end of app, since we have finished most part of back end for now, and need more hands to implement front end.
+ * Move one more person to work on Android.
+ * Mobile client will focus on Student and we are going to build a web client for teachers.
  * Change the constructor of objects to Factory style. It's easier to form objects from Json string read from socket, and front end usage will be more convenient.
 
 
@@ -40,13 +34,14 @@ List any process-related changes you are planning to make (if there are any)
 
 #### Goals and/or tasks that were met/completed:
 
-* Work out communication between client and server, as well as between server and database.
-* Finish some features of app including log in, sign up, enroll courses, create courses.
-* Finish database schema.
+* Established communication between client and server, as well as between server and database.
+* Finished some features of app including log in, sign up, enroll courses, create courses.
+* Finished database schema.
 
 #### Goals and/or tasks that were planned but not met/completed:
 
-* Didn't finish features such as open discussions, review and answer posted questions. One of the reasons is that front end is firstly focusing on other features such as log in, so the coding is delayed. Also, back end met difficulties during implementation of a consistent 'chatroom' of questions.
+* Server and database have not been deployed on cloud service like AWS, which means testing can only be done in local network.
+* We have not tested the connection between Server and Android, which means all the requests to server on Android are simulated.
 
 ## Meeting Highlights
 
@@ -54,5 +49,6 @@ Going into the next iteration, our main insights are:
 
  * Need to link front end and back end.
  * Let more person work on front end and UI design.
- * Finish feature of attendance.
+ * Mobile client will focus on Student and we are going to build a web client for teachers.
+ * Finish feature of attendance and file broadcasting.
 
