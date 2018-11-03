@@ -16,7 +16,7 @@ AnonClass
  * JiayiZhaoUofT: implementing the database schema.
  * LiaoHenry: Create basic UI for class “chatroom” interaction.
  * startbin90 (JIAJUN CHEN): Design and Develop Android view and control of view widgets.
- * khattabh: Design Schema for database. Deploint aws cloud services. 
+ * khattabh: Design Schema for database. Deploy AWS cloud services. 
 
 #### Events
  
@@ -53,9 +53,10 @@ The master repo will be safer since a pull request must be viewed prior to merge
 #### Goals and tasks
 
  * We must have a specific view of the entire structure of the software. How communications are made between clients and server, between server and database. How to implement these.
- * Initialize android workplace. Activities for basic usage of this app such as log in, sign up, enroll courses, create courses, open discussions, review and answer posted questions should be out as soon as possible.
- * Database schema must be implemented. We must use this schema to set up either a local or cloud database.
- * Make sure progress is made in back-end. If back-end can not support some certain functionalities, we will have to use dummies for the demonstration purposes. 
+ * Deploy Server and Database on cloud service like AWS
+ * Initialize an Android project. Implement features like log in, sign up, enroll courses, create courses, open discussions, review and answer posted questions
+ * Database schema must be implemented. Setup a database and make Server able to query the database.
+ * Make sure back-end(Server and database) can support requests from Android client. If back-end can not support some certain functionalities, we will have to use dummies for the demonstration purpose. 
 
 #### Artifacts
 
