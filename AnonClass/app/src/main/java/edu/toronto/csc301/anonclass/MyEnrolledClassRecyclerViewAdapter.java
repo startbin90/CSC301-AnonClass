@@ -6,24 +6,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import edu.toronto.csc301.anonclass.EnrolledClassFragment.OnListFragmentInteractionListener;
-import edu.toronto.csc301.anonclass.dummy.DummyContent.DummyItem;
-
 import java.util.List;
 
+import edu.toronto.csc301.anonclass.EnrolledClassFragment.OnListFragmentInteractionListener;
+import edu.toronto.csc301.anonclass.util.Course;
+
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
+
  */
 public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyEnrolledClassRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final List<Course> mCourses;
+    private final OnListFragmentInteractionListener mEnrolledClassListener;
+    private final JoinClassFragment.OnFragmentInteractionListener mJoinClassListener;
 
-    public MyEnrolledClassRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public MyEnrolledClassRecyclerViewAdapter(List<Course> items, OnListFragmentInteractionListener listener) {
+        mCourses = items;
+        mJoinClassListener = null;
+        mEnrolledClassListener = listener;
+    }
+
+    public MyEnrolledClassRecyclerViewAdapter(List<Course> items, JoinClassFragment.OnFragmentInteractionListener listener) {
+        mCourses = items;
+        mEnrolledClassListener = null;
+        mJoinClassListener = listener;
     }
 
     @Override
@@ -35,43 +41,52 @@ public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyE
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
-
+        holder.mItem = mCourses.get(position);
+        holder.mCourse.setText(mCourses.get(position).getCourse_code());
+        holder.mSection.setText(mCourses.get(position).getSection_number());
+        holder.mInstructor.setText(mCourses.get(position).getInstructor_name());
+        holder.mTime.setText(mCourses.get(position).getTime_created());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (null != mEnrolledClassListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mEnrolledClassListener.onClassClickedFromEnrolledClassFragment(holder.mItem);
+                } else if (mJoinClassListener != null){
+                    mJoinClassListener.onClassClickedFromJoinClassFragment(holder.mItem);
                 }
             }
         });
+
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return mCourses.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView mCourse;
+        public final TextView mSection;
+        public final TextView mInstructor;
+        public final TextView mTime;
+        public Course mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mCourse = view.findViewById(R.id.course);
+            mSection = view.findViewById(R.id.section);
+            mInstructor = view.findViewById(R.id.instructor);
+            mTime = view.findViewById(R.id.time);
+
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mCourse.getText() + "'";
         }
     }
 }

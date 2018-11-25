@@ -3,11 +3,10 @@ package edu.toronto.csc301.anonclass;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import edu.toronto.csc301.anonclass.util.User;
+import edu.toronto.csc301.anonclass.util.retMsg;
 
 public class registerActivity extends AppCompatActivity {
 
@@ -210,7 +210,7 @@ public class registerActivity extends AppCompatActivity {
      * Represents an asynchronous registration task used to authenticate
      * the user.
      */
-    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserRegisterTask extends AsyncTask<Void, Void, retMsg> {
 
         private final User mUser;
 
@@ -219,25 +219,25 @@ public class registerActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected retMsg doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                return false;
+                return null;
             }
 
-            return true;
+            return retMsg.getErrorRet(0);
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final retMsg ret) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
+            if (ret.getErrorCode() == 0) {
                 Toast.makeText(registerActivity.this, "Success", Toast.LENGTH_SHORT)
                 .show();
                 registerActivity.this.finish();

@@ -26,7 +26,16 @@
         <activity
             android:name=".AnonClassActivity"
             android:label="@string/title_activity_anon_class" />
-        <activity android:name=".registerActivity"></activity>
+        <activity android:name=".registerActivity" />
+        <activity
+            android:name=".InClassActivity"
+            android:label="@string/title_activity_in_class"
+            android:parentActivityName=".AnonClassActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.toronto.csc301.anonclass.AnonClassActivity" />
+        </activity>
     </application>
 
 </manifest>

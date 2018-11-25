@@ -3,22 +3,20 @@ package edu.toronto.csc301.anonclass;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,6 +31,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.User;
+import edu.toronto.csc301.anonclass.util.retMsg;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -103,8 +105,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.email_login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        // auto fill email and password for test
+        autoFiller();
     }
 
+    private void autoFiller(){
+        mPasswordView.setText("123456");
+        mEmailView.setText("csc301@test.com");
+    }
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -305,7 +314,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, retMsg> {
 
         private final String mEmail;
         private final String mPassword;
@@ -316,26 +325,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected retMsg doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                return false;
+                return null;
             }
 
-            return DUMMY_CREDENTIALS.containsKey(mEmail) && DUMMY_CREDENTIALS.get(mEmail).equals(mPassword);
+            User user = User.userFromServer("csc301@test.com", "abcde123",
+                    "Henry", "Liao",false, Course.getDummyCourses());
+
+            return retMsg.getUserRet(0, user);
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final retMsg ret) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
+            if (ret.getErrorCode() == 0) {
                 Intent launch = new Intent(LoginActivity.this,  AnonClassActivity.class);
+                launch.putExtra("user", ret.getUser().serialize());
                 LoginActivity.this.startActivity(launch);
                 finish();
 
