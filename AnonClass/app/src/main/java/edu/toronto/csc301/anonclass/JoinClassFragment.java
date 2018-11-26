@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
 
@@ -32,7 +33,7 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
     private int mColumnCount = 2;
     private List<Course> searched = new ArrayList<>();
     private searchClassTask mSearchTask;
-    private MyEnrolledClassRecyclerViewAdapter mAdapter;
+    private mEnrolledClassRecyclerViewAdapter mAdapter;
 
     public static JoinClassFragment newInstance(){
         return new JoinClassFragment();
@@ -87,7 +88,7 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            mAdapter = new MyEnrolledClassRecyclerViewAdapter(searched, mListener);
+            mAdapter = new mEnrolledClassRecyclerViewAdapter(searched, mListener);
             recyclerView.setAdapter(mAdapter);
         }
         SearchView search = view.findViewById(R.id.search_view);
@@ -157,17 +158,21 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+            // TODO: takes a search string and send it to server
+            //       server returns a retMsg obj which gives an error code and list of courses
+            //       related to the search string
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
-            retMsg ret = retMsg.getSearchedRet(0, Course.getDummyCourses());
+            return PassingData.ShowRelatedCourses(search);
 
-            return ret;
+//            try {
+//                // Simulate network access.
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                return null;
+//            }
+//            retMsg ret = retMsg.getSearchedRet(0, Course.getSearchedDummyCourses());
+//
+//            return ret;
         }
 
         @Override

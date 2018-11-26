@@ -14,19 +14,19 @@ import edu.toronto.csc301.anonclass.util.Course;
 /**
 
  */
-public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyEnrolledClassRecyclerViewAdapter.ViewHolder> {
+public class mEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<mEnrolledClassRecyclerViewAdapter.ViewHolder> {
 
     private final List<Course> mCourses;
     private final OnListFragmentInteractionListener mEnrolledClassListener;
     private final JoinClassFragment.OnFragmentInteractionListener mJoinClassListener;
 
-    public MyEnrolledClassRecyclerViewAdapter(List<Course> items, OnListFragmentInteractionListener listener) {
+    public mEnrolledClassRecyclerViewAdapter(List<Course> items, OnListFragmentInteractionListener listener) {
         mCourses = items;
         mJoinClassListener = null;
         mEnrolledClassListener = listener;
     }
 
-    public MyEnrolledClassRecyclerViewAdapter(List<Course> items, JoinClassFragment.OnFragmentInteractionListener listener) {
+    public mEnrolledClassRecyclerViewAdapter(List<Course> items, JoinClassFragment.OnFragmentInteractionListener listener) {
         mCourses = items;
         mEnrolledClassListener = null;
         mJoinClassListener = listener;

@@ -27,12 +27,14 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
@@ -205,7 +207,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(new User.LoginUserBuilder().email(email).pwd(password).build());
             mAuthTask.execute((Void) null);
         }
     }
@@ -316,29 +318,27 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, retMsg> {
 
-        private final String mEmail;
-        private final String mPassword;
+        private final User user;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+        UserLoginTask(User user) {
+            this.user = user;
         }
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
+            // TODO: takes a User obj and return retMsg obj which contains the error code and
+            //       user obj, using getUserRet() to get such a obj
+            // TODO: server has to know where the request is from
+            //       if it's from mobile client, teacher login will be rejected even if
+            //       correct email and password combination
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
 
-            User user = User.userFromServer("csc301@test.com", "abcde123",
-                    "Henry", "Liao",false, Course.getDummyCourses());
+            return PassingData.LogIn(user);
 
-            return retMsg.getUserRet(0, user);
+//            User user = User.fakeUserFromServer("csc301@test.com", "abcde123",
+//                    "Henry", "Liao",true, Course.getTeachersDummyCourses());
+//
+//            return retMsg.getUserRet(0, user);
         }
 
         @Override
@@ -347,10 +347,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (ret.getErrorCode() == 0) {
-                Intent launch = new Intent(LoginActivity.this,  AnonClassActivity.class);
-                launch.putExtra("user", ret.getUser().serialize());
-                LoginActivity.this.startActivity(launch);
-                finish();
+                if (ret.getUser().getStudentFlag()) {
+                    Intent launch = new Intent(LoginActivity.this, AnonClassActivity.class);
+                    launch.putExtra("user", ret.getUser().serialize());
+                    LoginActivity.this.startActivity(launch);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, "can't login as a teacher!", Toast.LENGTH_SHORT).show();
+                }
 
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

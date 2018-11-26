@@ -149,7 +149,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
             return;
         }
 
-        mGetClassStatusTask = new GetClassStatusTask(course.getCourse_id());
+        mGetClassStatusTask = new GetClassStatusTask(course.getId());
         mGetClassStatusTask.execute((Void) null);
     }
 

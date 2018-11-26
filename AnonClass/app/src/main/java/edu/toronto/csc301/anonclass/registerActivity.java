@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
+import edu.toronto.csc301.anonclass.util.PassingData;
+
 
 public class registerActivity extends AppCompatActivity {
 
@@ -155,7 +157,8 @@ public class registerActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            User user = User.getRegisterUserObj(email, pwd, utorid, firstName, lastName, flag);
+            User user = new User.RegisterUserBuilder().pwd(pwd).email(email).studentFlag(flag).
+                    UTORid(utorid).lastName(lastName).firstName(firstName).build();
             mAuthTask = new UserRegisterTask(user);
             mAuthTask.execute((Void)null);
         }
@@ -222,14 +225,10 @@ public class registerActivity extends AppCompatActivity {
         protected retMsg doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
+            System.out.println("m user" + mUser.serialize());
 
-            return retMsg.getErrorRet(0);
+            return PassingData.SignUp(mUser);
+
         }
 
         @Override
