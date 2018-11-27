@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.Date;
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.EnrolledClassFragment.OnListFragmentInteractionListener;
@@ -15,19 +14,19 @@ import edu.toronto.csc301.anonclass.util.Course;
 /**
 
  */
-public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyEnrolledClassRecyclerViewAdapter.ViewHolder> {
+public class mEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<mEnrolledClassRecyclerViewAdapter.ViewHolder> {
 
     private final List<Course> mCourses;
     private final OnListFragmentInteractionListener mEnrolledClassListener;
     private final JoinClassFragment.OnFragmentInteractionListener mJoinClassListener;
 
-    public MyEnrolledClassRecyclerViewAdapter(List<Course> items, OnListFragmentInteractionListener listener) {
+    public mEnrolledClassRecyclerViewAdapter(List<Course> items, OnListFragmentInteractionListener listener) {
         mCourses = items;
         mJoinClassListener = null;
         mEnrolledClassListener = listener;
     }
 
-    public MyEnrolledClassRecyclerViewAdapter(List<Course> items, JoinClassFragment.OnFragmentInteractionListener listener) {
+    public mEnrolledClassRecyclerViewAdapter(List<Course> items, JoinClassFragment.OnFragmentInteractionListener listener) {
         mCourses = items;
         mEnrolledClassListener = null;
         mJoinClassListener = listener;
@@ -46,8 +45,7 @@ public class MyEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<MyE
         holder.mCourse.setText(mCourses.get(position).getCourse_code());
         holder.mSection.setText(mCourses.get(position).getSection_number());
         holder.mInstructor.setText(mCourses.get(position).getInstructor_name());
-        Date date = mCourses.get(position).getTime_created();
-        holder.mTime.setText(date.toString());
+        holder.mTime.setText(mCourses.get(position).getTime_created());
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,5 +1,6 @@
 package edu.toronto.csc301.anonclass;
 
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
@@ -76,15 +79,20 @@ public class AnonClassActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anon_class);
+        String json;
+        if (savedInstanceState != null){
+            json = savedInstanceState.getString("user");
+        } else {
+            json = getIntent().getStringExtra("user");
+        }
 
-        String json = getIntent().getStringExtra("user");
         this.user = User.deSerialize(json);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         displaySelectedScreen(R.id.navigation_home);
         navigation.getMenu().getItem(0).setChecked(true);
 
-        attemptGetInfo();
+        //attemptGetInfo();
     }
 
     private void attemptGetInfo() {
@@ -96,13 +104,20 @@ public class AnonClassActivity extends AppCompatActivity
         mGetInfoTask.execute((Void) null);
     }
 
-    private void attemptJoinClass(Course course) {
-        if (mJoinClassTask!= null) {
-            return;
-        }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        System.out.println("onSaveInstanceState");
+        savedInstanceState.putString("user", user.serialize());
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
-        mJoinClassTask = new JoinClassTask(user.getEmail(), course.getCourse_id());
-        mJoinClassTask.execute((Void) null);
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        System.out.println("onRestoreInstanceState");
     }
 
     @Override
@@ -145,8 +160,34 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClassClickedFromJoinClassFragment(Course course) {
-        attemptJoinClass(course);
+    public void onClassClickedFromJoinClassFragment(final Course course) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setMessage("Join this class?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        attemptJoinClass(course);
+                        ((BottomSheetDialogFragment) getSupportFragmentManager().
+                                findFragmentByTag("JoinClassFragment")).dismiss();
+                    }
+                });
+        alertDialog.show();
+
+    }
+
+    private void attemptJoinClass(Course course) {
+        if (mJoinClassTask!= null) {
+            return;
+        }
+
+        mJoinClassTask = new JoinClassTask(user.getEmail(), course.getId());
+        mJoinClassTask.execute((Void) null);
     }
 
     @Override
@@ -172,32 +213,25 @@ public class AnonClassActivity extends AppCompatActivity
         protected retMsg doInBackground(Void... params) {
             // TODO: mEmail attempt to request join course_id, expect success or fail
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
-
-            return retMsg.getErrorRet(0);
+            return PassingData.EnrolCourse(mEmail, course_id);
         }
 
         @Override
         protected void onPostExecute(final retMsg ret) {
-            mGetInfoTask = null;
+            mJoinClassTask = null;
 
             if (ret.getErrorCode() == 0) {
                 AnonClassActivity.this.attemptGetInfo();
 
             } else {
-                Toast.makeText(AnonClassActivity.this, "get info failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AnonClassActivity.this, "join class failed", Toast.LENGTH_SHORT).show();
             }
             postExecute();
         }
 
         @Override
         protected void onCancelled() {
-            mGetInfoTask = null;
+            mJoinClassTask = null;
             //showProgress(false);
         }
     }
@@ -214,18 +248,20 @@ public class AnonClassActivity extends AppCompatActivity
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to get enrolled courses, expect to get a user object
+            // TODO: attempt to get enrolled courses, expect to get a retMsg with error code and
+            //       user obj, this is similar to what was done in login process.
+            //       we update the user object all together here
 
-            try {
+            /*try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return null;
             }
-            User user = User.userFromServer("csc301@test.com", "abcde123",
-                    "Henry", "Liao",false, Course.getDummyCourses());
+            User user = User.fakeUserFromServer("csc301@test.com", "abcde123",
+                    "Henry", "Liao",true, Course.getUpdatedEnrolledDummyCourses());*/
 
-            return retMsg.getUserRet(0, user);
+            return PassingData.DisplayCourses(mEmail);
         }
 
         @Override
@@ -233,8 +269,8 @@ public class AnonClassActivity extends AppCompatActivity
             mGetInfoTask = null;
 
             if (ret.getErrorCode() == 0) {
-                AnonClassActivity.this.user = ret.getUser();
-
+                AnonClassActivity.this.user.getCourses().clear();
+                AnonClassActivity.this.user.getCourses().addAll(ret.getUser().getCourses());
             } else {
                 Toast.makeText(AnonClassActivity.this, "get info failed", Toast.LENGTH_SHORT).show();
             }

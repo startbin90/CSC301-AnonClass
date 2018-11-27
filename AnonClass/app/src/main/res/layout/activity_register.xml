@@ -70,7 +70,7 @@
                     android:id="@+id/signIn_utoridField"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="@string/utorid"
+                    android:hint="@string/UTORid"
                     android:inputType="text"
                     android:ems="10"
                     android:maxLength="8"
