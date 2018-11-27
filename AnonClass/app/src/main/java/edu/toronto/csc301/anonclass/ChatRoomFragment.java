@@ -1,7 +1,6 @@
 package edu.toronto.csc301.anonclass;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,7 +22,7 @@ import edu.toronto.csc301.anonclass.util.Question;
 public class ChatRoomFragment extends Fragment {
 
     private OnChatRoomFragmentInteractionListener mListener;
-    private MyQuestionRecyclerViewAdapter adapter;
+    private mQuestionRecyclerViewAdapter adapter;
     EditText message;
 
 
@@ -45,7 +44,7 @@ public class ChatRoomFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) found;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new MyQuestionRecyclerViewAdapter(mListener.requestQuestions(), mListener);
+            adapter = new mQuestionRecyclerViewAdapter(mListener.requestQuestions(), mListener);
             recyclerView.setAdapter(adapter);
 
         }

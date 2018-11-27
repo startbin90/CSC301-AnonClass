@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
-public class retMsg implements EnclosedInfo {
+public class retMsg implements SerializableInfo {
 
     private int errorCode;
     private User user;

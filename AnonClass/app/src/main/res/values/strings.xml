@@ -28,7 +28,7 @@
     <string name="email">Email</string>
     <string name="student">Student</string>
     <string name="instructor">Instructor</string>
-    <string name="utorid">utorid</string>
+    <string name="UTORid">UTORid</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="password">Password</string>

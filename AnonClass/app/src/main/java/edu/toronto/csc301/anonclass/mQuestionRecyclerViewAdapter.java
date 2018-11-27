@@ -10,24 +10,24 @@ import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Question;
 
-public class MyQuestionRecyclerViewAdapter extends RecyclerView.Adapter<MyQuestionRecyclerViewAdapter.ViewHolder> {
+public class mQuestionRecyclerViewAdapter extends RecyclerView.Adapter<mQuestionRecyclerViewAdapter.ViewHolder> {
     private final List<Question> mQuestions;
     private final ChatRoomFragment.OnChatRoomFragmentInteractionListener mEnrolledClassListener;
 
-    public MyQuestionRecyclerViewAdapter(List<Question> questions, ChatRoomFragment.OnChatRoomFragmentInteractionListener listener) {
+    public mQuestionRecyclerViewAdapter(List<Question> questions, ChatRoomFragment.OnChatRoomFragmentInteractionListener listener) {
         mQuestions = questions;
         mEnrolledClassListener = listener;
     }
 
     @Override
-    public MyQuestionRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public mQuestionRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.message_style, parent, false);
-        return new MyQuestionRecyclerViewAdapter.ViewHolder(view);
+        return new mQuestionRecyclerViewAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final MyQuestionRecyclerViewAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final mQuestionRecyclerViewAdapter.ViewHolder holder, int position) {
         holder.mItem = mQuestions.get(position);
         holder.mName.setText(mQuestions.get(position).getEmail());
         holder.mQuestion.setText(mQuestions.get(position).getQuestion());

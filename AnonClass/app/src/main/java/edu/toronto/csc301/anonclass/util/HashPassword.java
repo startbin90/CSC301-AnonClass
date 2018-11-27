@@ -9,7 +9,7 @@ import java.security.NoSuchAlgorithmException;
 public class HashPassword {
     public static String hash(String password) {
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD2");
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             messageDigest.update(password.getBytes());
             byte[] md = messageDigest.digest();
 
