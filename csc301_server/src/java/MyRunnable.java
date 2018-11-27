@@ -18,13 +18,17 @@ public class MyRunnable implements Runnable {
     }
 
     public void run() {
+
         try {
+            Questions Questions = new Questions();
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
             AnnonclassDataBase db = new AnnonclassDataBase();
             db.connectDB("jdbc:postgresql://localhost:5432/anonclass");
             String request = in.readLine();
+            System.out.println(request);
             JSONObject info  = new JSONObject(in.readLine());
+            System.out.println(info);
             try {
                 if (request.equals("Sign up")) {
                     int res = db.signup(info);
@@ -38,26 +42,17 @@ public class MyRunnable implements Runnable {
                         out.println(0);
                         out.println(user);
                     }
-                } else if (request.equals("enroll")) {
-                    out.println(db.enroll_course(info));
-                } else if (request.equals("create")) {
+                } else if (request.equals("Enroll")) {
+                    int res = db.enroll_course(info);
+                    out.println(res);
+                } else if (request.equals("Create")) {
                     out.println(db.addCourse(info));
-                } else if (request.equals("ask")) {
-                    try {
-                        StringBuilder s = new StringBuilder();
-                        String line;
-                        while ((line = in.readLine()) != null) {
-                            s.append(line + '\n');
-                        }
-                        for (Socket writer : writers) {
-                            PrintWriter out2 = new PrintWriter(new OutputStreamWriter(writer.getOutputStream())
-                                    , true);
-                            out2.println(s);
-                        }
-                    } catch (IOException disconnected) {
-                        // socket disconnect
-                        System.out.println("disconnected");
-                    }
+                } else if (request.equals("Ask Question")) {
+                    String session = Integer.toString(info.getInt("session"));
+//                    Questions.addSession(session);
+                    Questions.addQuestion(session, info.toString());
+                    out.println(0);
+
                 } else if (request.equals("Display courses")) {
                     JSONArray ar = db.display(info);
                     if (ar.isEmpty()) {
@@ -66,6 +61,17 @@ public class MyRunnable implements Runnable {
                     } else {
                         out.println(0);
                         out.println(ar);
+                    }
+                } else if (request.equals("Display enrolled courses")) {
+                    JSONObject user = db.display_enrolled_courses(info);
+                    out.println(0);
+                    out.println(user);
+                } else if (request.equals("Open Session")) {
+                    if (Questions.getHashtable().containsKey(info.getString("session"))) {
+                        out.println(1);
+                    } else {
+                        Questions.addSession(info.getString("session"));
+                        out.println(0);
                     }
                 }
             } catch (SQLException unhandled) {

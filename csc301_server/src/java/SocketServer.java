@@ -16,6 +16,7 @@ public class SocketServer {
         while (true) {
             try {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println("accept connection\n");
                 clients.add(clientSocket);
                 MyRunnable n = new MyRunnable(clientSocket, clients);
                 new Thread(n).start();
