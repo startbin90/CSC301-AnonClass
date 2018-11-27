@@ -1,6 +1,6 @@
 package edu.toronto.csc301.anonclass.util;
 
-public interface EnclosedInfo {
+public interface SerializableInfo {
     String serialize();
 
 }
