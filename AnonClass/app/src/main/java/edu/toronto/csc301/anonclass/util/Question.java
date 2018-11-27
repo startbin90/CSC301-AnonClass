@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Question implements EnclosedInfo {
+public class Question implements SerializableInfo {
 
     private String email;
     private String question;

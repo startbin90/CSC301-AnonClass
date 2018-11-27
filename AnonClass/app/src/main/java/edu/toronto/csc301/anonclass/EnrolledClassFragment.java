@@ -27,11 +27,11 @@ import edu.toronto.csc301.anonclass.util.Course;
  */
 public class EnrolledClassFragment extends Fragment {
 
-    // TODO: Customize parameters
     private int mColumnCount = 2;
     private Activity context;
     private OnListFragmentInteractionListener mListener;
     private SwipeRefreshLayout mRefreshLayout;
+    private RecyclerView.Adapter adapter;
 
     public static EnrolledClassFragment newInstance(Activity act){
         EnrolledClassFragment instance = new EnrolledClassFragment();
@@ -65,7 +65,8 @@ public class EnrolledClassFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyEnrolledClassRecyclerViewAdapter(mListener.onRequestCourses(), mListener));
+            this.adapter = new mEnrolledClassRecyclerViewAdapter(mListener.onRequestCourses(), mListener);
+            recyclerView.setAdapter(adapter);
         }
         Button create = view.findViewById(R.id.create);
         Button enroll = view.findViewById(R.id.enroll);
@@ -76,18 +77,6 @@ public class EnrolledClassFragment extends Fragment {
                 public void onClick(View v) {
                     FragmentManager manager = getFragmentManager();
                     BottomSheetDialogFragment bottomSheet = JoinClassFragment.newInstance();
-                    assert manager != null: "getFragmentManager failed, get null object instead";
-                    bottomSheet.show(manager, "CreateClassFragment");
-                }
-            });
-        } else {
-            enroll.setVisibility(View.GONE);
-            create.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FragmentManager manager = getFragmentManager();
-                    BottomSheetDialogFragment bottomSheet = CreateClassFragment.newInstance();
-
                     assert manager != null: "getFragmentManager failed, get null object instead";
                     bottomSheet.show(manager, "JoinClassFragment");
                 }
@@ -111,6 +100,7 @@ public class EnrolledClassFragment extends Fragment {
 
     void onRefreshFinished(){
         mRefreshLayout.setRefreshing(false);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
