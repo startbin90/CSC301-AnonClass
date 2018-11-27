@@ -19,14 +19,13 @@ import java.util.HashMap;
 */
 public class PassingData {
 
-    private static final String host = "100.64.170.86";
+    private static final String host = "100.64.167.14";
     private static final int portNumber = 30000;
 
     private static Gson gson = new GsonBuilder().create();
 
     //return 0 if success, 1 if failed, -1 if error
     public static retMsg SignUp(User user) {
-
         ArrayList<String> results = passing("Sign up", 1, user.serialize());
 
         if (results != null) {
@@ -38,8 +37,8 @@ public class PassingData {
     }
 
     // login and display all courses on UI
-    public static retMsg LogIn(String email, String password) {
-        User user = User.getLoginUserObj(email, password);
+    public static retMsg LogIn(User user) {
+
 
         ArrayList<String> results = passing("Log in", 2, user.serialize());
 
@@ -60,7 +59,12 @@ public class PassingData {
     // display courses registered by given student
     public static retMsg DisplayCourses(String email) {
 
-        ArrayList<String> results = passing("Display enrolled courses", 2, "");
+        HashMap<String, Object> infoMap = new HashMap<String, Object>();
+        infoMap.put("email", email);
+
+        String info = gson.toJson(infoMap);
+
+        ArrayList<String> results = passing("Display enrolled courses", 2, info);
 
         if (results != null) {
             int error = Integer.parseInt(results.get(0));
@@ -109,7 +113,7 @@ public class PassingData {
 
         String info = gson.toJson(infoMap);
 
-        ArrayList<String> results = passing("enroll", 1, info);
+        ArrayList<String> results = passing("Enroll", 1, info);
 
         if (results != null) {
             return retMsg.getErrorRet(Integer.parseInt(results.get(0)));
@@ -134,13 +138,16 @@ public class PassingData {
 
     }
 
+    public static retMsg getStatus() {
+        return null;
+    }
+
     // return an array of information
     // index 0 is error flag, index 1 is returned Json string
     private static ArrayList<String> passing(String instruction, int length, String info) {
 
         try {
-            InetAddress address = InetAddress.getByName(host);
-            Socket socket = new Socket(address, portNumber);
+            Socket socket = new Socket(host, portNumber);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
