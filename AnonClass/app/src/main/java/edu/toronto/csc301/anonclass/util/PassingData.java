@@ -2,6 +2,7 @@ package edu.toronto.csc301.anonclass.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -94,7 +95,8 @@ public class PassingData {
                 return retMsg.getErrorRet(1);
             }
 
-            Type listType = new TypeToken<ArrayList<Course>>() {}.getType();
+            Type listType = new TypeToken<ArrayList<Course>>() {
+            }.getType();
             ArrayList<Course> courses = gson.fromJson(results.get(1), listType);
 
             return retMsg.getSearchedRet(0, courses);
@@ -105,7 +107,7 @@ public class PassingData {
     }
 
     // student add course, success return 0, fail return 1, error return -1
-    public static retMsg EnrolCourse(String email, int id){
+    public static retMsg EnrolCourse(String email, int id) {
 
         HashMap<String, Object> infoMap = new HashMap<String, Object>();
         infoMap.put("email", email);
@@ -138,8 +140,75 @@ public class PassingData {
 
     }
 
-    public static retMsg getStatus() {
-        return null;
+    // get status of this session
+    public static retMsg GetStatus(int courseId) {
+        HashMap<String, Object> infoMap = new HashMap<String, Object>();
+        infoMap.put("id", courseId);
+
+        String info = gson.toJson(infoMap);
+
+        ArrayList<String> results = passing("get status", 2, info);
+
+        if (results != null) {
+            int error = Integer.parseInt(results.get(0));
+            if (error == 1) {
+                return retMsg.getErrorRet(1);
+            }
+
+            return retMsg.getStringExtraRet(error, results.get(2));
+        } else {
+            return retMsg.getErrorRet(-1);
+        }
+    }
+
+    // prof start session
+    public static retMsg StartSession(Session session){
+        ArrayList<String> results = passing("open session", 1, session.serialize());
+
+        if (results != null) {
+            return retMsg.getErrorRet(Integer.parseInt(results.get(0)));
+        } else {
+            return retMsg.getErrorRet(-1);
+        }
+    }
+
+    // TODO: student join the session
+    public static retMsg JoinSession() {
+
+        return retMsg.getErrorRet(0);
+    }
+
+    // ask question
+    public static retMsg AskingQuestion(Question question) {
+
+        ArrayList<String> results = passing("Ask Question", 1, question.serialize());
+
+        if (results != null) {
+            return retMsg.getErrorRet(Integer.parseInt(results.get(0)));
+        } else {
+            return retMsg.getErrorRet(-1);
+        }
+
+    }
+
+    // refresh question room page
+    public static retMsg RefreshQuestionRoom(Question question) {
+        ArrayList<String> results = passing("refresh room", 2, question.serialize());
+
+        if (results != null) {
+            int error = Integer.parseInt(results.get(0));
+            if (error == 1) {
+                return retMsg.getErrorRet(1);
+            }
+
+            Type listType = new TypeToken<ArrayList<Question>>() {
+            }.getType();
+            ArrayList<Question> questions = gson.fromJson(results.get(1), listType);
+
+            return retMsg.getQuestionsRet(0, questions);
+        } else {
+            return retMsg.getErrorRet(-1);
+        }
     }
 
     // return an array of information
@@ -168,75 +237,5 @@ public class PassingData {
         }
 
     }
-
-
-    // TODO: keep receiving questions from server
-    public static void QuestionRoom() {
-
-        try {
-            InetAddress address = InetAddress.getByName(host);
-            Socket socket = new Socket(address, portNumber);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-
-            ReceiveQuestions receiveQuestions = ReceiveQuestions.getInstance(in, true);
-            receiveQuestions.run();
-
-
-        } catch (IOException e) {
-            System.out.println("Connection failed.");
-        }
-    }
-
-    // ask question
-    public static retMsg AskingQuestion(String question) {
-
-        ArrayList<String> results = passing("Ask question", 1, question);
-
-        if (results != null) {
-            return retMsg.getErrorRet(Integer.parseInt(results.get(0)));
-        } else {
-            return retMsg.getErrorRet(-1);
-        }
-
-    }
-
-    private static class ReceiveQuestions implements Runnable {
-
-        private BufferedReader in;
-        private boolean inRoom;
-
-        public static ReceiveQuestions getInstance(BufferedReader in, boolean inRoom) {
-            return new ReceiveQuestions(in, inRoom);
-        }
-
-
-        private ReceiveQuestions(BufferedReader in, boolean inRoom){
-            this.in = in;
-            this.inRoom = inRoom;
-
-        }
-
-        public void exitRoom() {
-            inRoom = false;
-        }
-
-        public void askQuestions() {
-
-        }
-
-        @Override
-        public void run() {
-            try {
-                while(inRoom){
-                    String question = in.readLine();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 
 }
