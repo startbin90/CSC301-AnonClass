@@ -12,17 +12,20 @@ public class Question implements SerializableInfo {
     private String email;
     private String question;
     private Date when;
+    private int session;
 
     public static List<Question> getDummyQuestions(){
         List<Question> lst = new ArrayList<>();
-        lst.add(new Question("davy@test.com", "i don't understand \n could u please explain it again?", new Date()));
-        lst.add(new Question("anthony@test.com", "davy, don't interrupt teacher!", new Date()));
+        lst.add(new Question("davy@test.com", "i don't understand \n could u please explain it again?", new Date(), 1));
+        lst.add(new Question("anthony@test.com", "davy, don't interrupt teacher!", new Date(), 2));
         return lst;
     }
-    public Question(String email, String question, Date when) {
+
+    public Question(String email, String question, Date when, int session) {
         this.email = email;
         this.question = question;
         this.when = when;
+        this.session = session;
     }
 
     public String getEmail() {
@@ -35,6 +38,10 @@ public class Question implements SerializableInfo {
 
     public String getQuestion() {
         return question;
+    }
+
+    public int getSession() {
+        return session;
     }
 
     @Override
