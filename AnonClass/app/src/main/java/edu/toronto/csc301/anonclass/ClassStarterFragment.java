@@ -7,8 +7,8 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +16,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.android.gms.maps.MapView;
 
 import edu.toronto.csc301.anonclass.util.Course;
 import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.Session;
 import edu.toronto.csc301.anonclass.util.User;
+import edu.toronto.csc301.anonclass.util.mLocationGetter;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
 /**
@@ -47,7 +43,9 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
     private double latitude;
     private double longitude;
 
+    private static String TAG = "ClassStarterFragment";
 
+    private MapView mMapView;
     public static ClassStarterFragment newInstance(User user, Course course){
         ClassStarterFragment obj = new ClassStarterFragment();
         obj.course = course;
@@ -76,12 +74,23 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         mInstructor.setText(course.getInstructor_name());
         mTime.setText(course.getTime_created());
 
+        mMapView = view.findViewById(R.id.mapView);
+
+        final mLocationGetter.LocationResult locationResult = new mLocationGetter.LocationResult(){
+            @Override
+            public void gotLocation(Location location){
+                //Got the location!
+                Log.d(TAG, String.format("lat: %.2f; long: %.2f", location.getLatitude(), location.getLongitude()));
+            }
+        };
         Button location = view.findViewById(R.id.location);
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: attempt to get user's location and set latitude and longitude attributes
-                mListener.onGetLocationFromClassStarterFrag();
+
+                mLocationGetter myLocation = new mLocationGetter();
+                myLocation.getLocation(getContext(), locationResult);
 
                 setLocation(0,0);
             }
@@ -146,7 +155,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
             return;
         }
 
-       mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course.getCourse_id(), latitude, longitude));
+        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course.getCourse_id(), latitude, longitude));
         mAttendClassTask.execute((Void) null);
     }
 
@@ -162,6 +171,9 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         protected retMsg doInBackground(Void... params) {
             // TODO: attempt to request join or open a class, expect a session number
 
+            if (LoginActivity.DEBUG == 1){
+                return retMsg.getErrorRet(0);
+            }
             return PassingData.JoinSession(session);
         }
 

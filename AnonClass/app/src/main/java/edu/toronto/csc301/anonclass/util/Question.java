@@ -14,11 +14,14 @@ public class Question extends SerializableInfo {
     private Date when;
     private int course_id;
 
+    private static List<Question> dummyQuestions = new ArrayList<>();
     public static List<Question> getDummyQuestions(){
-        List<Question> lst = new ArrayList<>();
-        lst.add(new Question("davy@test.com", "i don't understand \n could u please explain it again?", new Date(), 1));
-        lst.add(new Question("anthony@test.com", "davy, don't interrupt teacher!", new Date(), 2));
-        return lst;
+        dummyQuestions.add(new Question("davy@test.com", "i don't understand \n could u please explain it again?", new Date(), 1));
+        dummyQuestions.add(new Question("anthony@test.com", "davy, don't interrupt teacher!", new Date(), 2));
+        return dummyQuestions;
+    }
+    public static void addDummyQuestion(Question ques){
+        dummyQuestions.add(ques);
     }
 
     public Question(String email, String question, Date when, int course_id) {
