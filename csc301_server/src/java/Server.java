@@ -1,6 +1,8 @@
 import org.json.JSONObject;
 public class Server {
     public static void main(String[] args) throws Exception{
+        SessionInfo s = new SessionInfo(new Tuple(1,1));
+        SessionStorage.addSession("2", s);
         SocketServer sc = new SocketServer();
         sc.runServer();
 

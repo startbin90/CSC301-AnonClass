@@ -24,14 +24,7 @@ public class SessionInfo {
         this.questions.add(questioninfo);
     }
 
-    public int joinSession(String email, Tuple location) {
-//        if (location.getX() == coordinate.getX() && location.getY() == coordinate.getY()) {
-//            this.students.add(email);
-//            return 0;
-//        } else {
-//            return 1;
-//        }
+    public void joinSession(String email, Tuple location) {
         this.students.add(email);
-        return 0;
     }
 }

@@ -22,7 +22,6 @@ public class MyRunnable implements Runnable {
     public void run() {
 
         try {
-            SessionStorage SessionStorage = new SessionStorage();
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
             AnnonclassDataBase db = new AnnonclassDataBase();
@@ -30,12 +29,6 @@ public class MyRunnable implements Runnable {
             String request = in.readLine();
             System.out.println(request);
             JSONObject info  = new JSONObject(in.readLine());
-            SessionInfo s = new SessionInfo(new Tuple(1,1));
-//            JSONObject q = new JSONObject();
-//            q.
-//            s.addQuestions();
-//            s.addQuestions();
-            SessionStorage.addSession("2", s);
             System.out.println(info);
             try {
                 if (request.equals("Sign up")) {
@@ -60,11 +53,12 @@ public class MyRunnable implements Runnable {
                     int course_id = info.getInt("course_id");
                     SessionInfo sessionInfo = SessionStorage.getSessionInfo(Integer.toString(course_id));
                     if (sessionInfo == null) {
+                        System.out.println("sessionInfo null");
                         out.println(1);
                     } else {
-                        sessionInfo.addQuestions(info);
+                        SessionStorage.addSessionQuestion(Integer.toString(course_id), info);
                         out.println(0);
-                        List<JSONObject> questions = sessionInfo.getQuestions();
+                        List<JSONObject> questions = SessionStorage.getQuestions(Integer.toString(course_id));
                         JSONArray ret= new JSONArray();
                         for (JSONObject q:questions) {
                             ret.put(q);
@@ -90,9 +84,6 @@ public class MyRunnable implements Runnable {
                 } else if (request.equals("Join Session")) {
                     int course_id = info.getInt("course_id");
                     String email = info.getString("email");
-//                    int x = info.getInt("x");
-//                    int y = info.getInt("y");
-//                    Tuple location = new Tuple(x,y);
                     double latitude = info.getDouble("latitude");
                     double longitude = info.getDouble("longitude");
                     Tuple location = new Tuple(latitude, longitude);
@@ -100,13 +91,12 @@ public class MyRunnable implements Runnable {
                     if (sessionInfo == null) {
                         out.println(1);
                     } else {
-                        sessionInfo.joinSession(email, location);
+                        SessionStorage.StudentJoin(Integer.toString(course_id), email, location);
                         out.println(0);
                     }
                 } else if (request.equals("Refresh")) {
                     int course_id = info.getInt("course_id");
-                    SessionInfo sessionInfo = SessionStorage.getSessionInfo(Integer.toString(course_id));
-                    List<JSONObject> questions = sessionInfo.getQuestions();
+                    List<JSONObject> questions = SessionStorage.getQuestions(Integer.toString(course_id));
                     JSONArray ret= new JSONArray();
                     for (JSONObject q:questions) {
                         ret.put(q);
