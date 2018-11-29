@@ -22,7 +22,7 @@ import java.util.HashMap;
 */
 public class PassingData {
 
-    private static final String host = "100.64.167.14";
+    private static final String host = "192.168.0.23";
     private static final int portNumber = 30000;
 
     private static Gson gson = new GsonBuilder().create();
@@ -149,14 +149,10 @@ public class PassingData {
     }
 
     // student join the session
-    public static retMsg JoinSession(String email, int courseId, Location location) {
+    public static retMsg JoinSession(Session session) {
 
-        HashMap<String, Object> infoMap = new HashMap<String, Object>();
-        infoMap.put("email", email);
-        infoMap.put("course_id", courseId);
-        infoMap.put("location", location);
 
-        String info = gson.toJson(infoMap);
+        String info = session.serialize();
 
         ArrayList<String> results = passing("Join Session", 1, info);
 
