@@ -191,7 +191,7 @@ public class PassingData {
         infoMap.put("course_id", id);
         String info = gson.toJson(infoMap);
 
-        ArrayList<String> results = passing("refresh", 2, info);
+        ArrayList<String> results = passing("Refresh", 2, info);
 
         if (results != null) {
             int error = Integer.parseInt(results.get(0));
