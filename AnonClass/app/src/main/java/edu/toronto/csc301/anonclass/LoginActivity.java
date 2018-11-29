@@ -45,6 +45,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+    public static final int DEBUG = 1;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -332,13 +333,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //       if it's from mobile client, teacher login will be rejected even if
             //       correct email and password combination
 
+            if (LoginActivity.DEBUG == 1){
+                User user = User.fakeUserFromServer("csc301@test.com", "abcde123",
+                        "Henry", "Liao",true, Course.getTeachersDummyCourses());
 
+                return retMsg.getUserRet(0, user);
+            }
             return PassingData.LogIn(user);
-
-//            User user = User.fakeUserFromServer("csc301@test.com", "abcde123",
-//                    "Henry", "Liao",true, Course.getTeachersDummyCourses());
-//
-//            return retMsg.getUserRet(0, user);
         }
 
         @Override
