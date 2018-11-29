@@ -1,19 +1,20 @@
 package edu.toronto.csc301.anonclass.util;
 
 
-public class Session {
+public class Session extends SerializableInfo{
     String email;
-    Course course;
-    float latitude;
-    float longitude;
+    int course_id;
+    double latitude;
+    double longitude;
 
-    public static Session requestSession(String email, Course course, float latitude, float longitude){
-        return new Session(email, course, latitude, longitude);
+    public static Session requestSession(String email, int course_id, double latitude, double longitude){
+        return new Session(email, course_id, latitude, longitude);
     }
-    private Session(String email, Course course, float latitude, float longitude) {
+    private Session(String email, int course_id, double latitude, double longitude) {
         this.email = email;
-        this.course = course;
+        this.course_id = course_id;
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 }

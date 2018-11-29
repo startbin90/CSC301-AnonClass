@@ -1,10 +1,14 @@
 package edu.toronto.csc301.anonclass;
-
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +16,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.Session;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
@@ -23,20 +35,18 @@ import edu.toronto.csc301.anonclass.util.retMsg;
 public class ClassStarterFragment extends BottomSheetDialogFragment {
 
     private OnClassStarterFragmentInteractionListener mListener;
-    private GetClassStatusTask mGetClassStatusTask;
     private attendClassTask mAttendClassTask;
     private TextView mCourseCode;
     private TextView mCourseName;
     private TextView mSection;
     private TextView mInstructor;
     private TextView mTime;
-    private TextView statusView;
-    private int classStatus = -1; // -1 unknown, 0 on, 1 off
     private Course course;
     private User user;
     private boolean isLocationSet = false;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
+
 
     public static ClassStarterFragment newInstance(User user, Course course){
         ClassStarterFragment obj = new ClassStarterFragment();
@@ -59,7 +69,6 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         mSection = view.findViewById(R.id.section);
         mInstructor = view.findViewById(R.id.instructor);
         mTime = view.findViewById(R.id.time);
-        statusView = view.findViewById(R.id.status);
 
         mCourseCode.setText(course.getCourse_code());
         mCourseName.setText(course.getCourse_name());
@@ -72,6 +81,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
             @Override
             public void onClick(View v) {
                 // TODO: attempt to get user's location and set latitude and longitude attributes
+                mListener.onGetLocationFromClassStarterFrag();
 
                 setLocation(0,0);
             }
@@ -97,7 +107,6 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        attemptGetClassStatus();
     }
 
     @Override
@@ -113,22 +122,18 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
      * activity.
      */
     public interface OnClassStarterFragmentInteractionListener {
-        void onFragmentInteractionFromClassStarterFrag();
+        void onGetLocationFromClassStarterFrag();
     }
 
+    public void onLocationUpdated(Location loc){
+        this.isLocationSet = true;
+        System.out.println(loc.getLongitude());
+        System.out.println(loc.getLatitude());
+    }
     private void setLocation(float latitude, float longitude){
         this.latitude = latitude;
         this.longitude = longitude;
         this.isLocationSet = true;
-    }
-    private void updateStatus(int status){
-        if (status == 0){
-            this.statusView.setText("On");
-            this.classStatus = 0;
-        } else if (status == 1){
-            this.statusView.setText("Off");
-            this.classStatus = 1;
-        }
     }
 
     private void attemptJoinClass(){
@@ -137,20 +142,11 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         }
 
         if (!isLocationSet) {
-            return;
+            Toast.makeText(getContext(), "Location not set", Toast.LENGTH_SHORT).show();
         }
 
-        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course, latitude, longitude));
+       mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course.getCourse_id(), latitude, longitude));
         mAttendClassTask.execute((Void) null);
-    }
-
-    private void attemptGetClassStatus(){
-        if (mGetClassStatusTask != null) {
-            return;
-        }
-
-        mGetClassStatusTask = new GetClassStatusTask(course.getId());
-        mGetClassStatusTask.execute((Void) null);
     }
 
     public class attendClassTask extends AsyncTask<Void, Void, retMsg> {
@@ -165,78 +161,29 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         protected retMsg doInBackground(Void... params) {
             // TODO: attempt to request join or open a class, expect a session number
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
-
-            return retMsg.getErrorRet(0);
+            return PassingData.JoinSession(session);
         }
 
         @Override
         protected void onPostExecute(final retMsg ret) {
-            mGetClassStatusTask = null;
+            mAttendClassTask = null;
 
             if (ret.getErrorCode() == 0) {
                 Intent launch = new Intent(ClassStarterFragment.this.getContext(),  InClassActivity.class);
                 launch.putExtra("user", user.serialize());
-                launch.putExtra("session_num", ret.getStringExtra());
+                launch.putExtra("course", course.serialize());
                 ClassStarterFragment.this.startActivity(launch);
             } else {
                 Toast.makeText(ClassStarterFragment.this.getContext(),
-                        "get class status failed", Toast.LENGTH_SHORT).show();
+                        "attend class failed", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mGetClassStatusTask = null;
+            mAttendClassTask = null;
             //showProgress(false);
         }
     }
-    /**
-     * Represents an asynchronous task getting class status
-     */
-    public class GetClassStatusTask extends AsyncTask<Void, Void, retMsg> {
 
-        private final int class_id;
-
-        GetClassStatusTask(int class_id) {
-            this.class_id = class_id;
-        }
-
-        @Override
-        protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to get class status 0 on 1 off, -1 error
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
-
-            return retMsg.getErrorRet(0);
-        }
-
-        @Override
-        protected void onPostExecute(final retMsg ret) {
-            mGetClassStatusTask = null;
-
-            if (!(ret.getErrorCode() == -1)) {
-                ClassStarterFragment.this.updateStatus(ret.getErrorCode());
-            } else {
-                Toast.makeText(ClassStarterFragment.this.getContext(),
-                        "get class status failed", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mGetClassStatusTask = null;
-            //showProgress(false);
-        }
-    }
 }

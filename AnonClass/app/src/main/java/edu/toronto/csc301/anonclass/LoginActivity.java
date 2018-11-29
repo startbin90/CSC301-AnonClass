@@ -113,8 +113,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void autoFiller(){
-        mPasswordView.setText("123456");
-        mEmailView.setText("csc301@test.com");
+        mPasswordView.setText("11111111");
+        mEmailView.setText("123@1");
     }
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -356,9 +356,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Toast.makeText(LoginActivity.this, "can't login as a teacher!", Toast.LENGTH_SHORT).show();
                 }
 
-            } else {
+            } else if (ret.getErrorCode() == 1){
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
+            } else {
+                Toast.makeText(LoginActivity.this, "Connection failed", Toast.LENGTH_SHORT).show();
             }
         }
 

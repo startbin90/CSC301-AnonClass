@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Question implements SerializableInfo {
+public class Question extends SerializableInfo {
 
     private String email;
     private String question;
@@ -44,9 +44,4 @@ public class Question implements SerializableInfo {
         return course_id;
     }
 
-    @Override
-    public String serialize() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
-    }
 }
