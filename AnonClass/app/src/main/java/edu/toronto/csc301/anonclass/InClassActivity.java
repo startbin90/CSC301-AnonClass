@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import edu.toronto.csc301.anonclass.util.Course;
 import edu.toronto.csc301.anonclass.util.Question;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
@@ -39,7 +40,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
      */
     private ViewPager mViewPager;
     private User user;
-    private String session;
+    private Course course;
     private GetQuestionsTask mGetQuestionTask;
     private SendQuestionTask mSendQuestionTask;
     private List<Question> questions = new ArrayList<>();
@@ -51,7 +52,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
         setContentView(R.layout.activity_in_class);
 
         user = User.deSerialize(getIntent().getStringExtra("user"));
-        session = getIntent().getStringExtra("session_num");
+        course = Course.deSerialize(getIntent().getStringExtra("course"));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -97,7 +98,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
 
     @Override
     public void onSendClicked(String question) {
-        attemptSendQuestion(new Question(user.getEmail(), question, new Date()));
+        attemptSendQuestion(new Question(user.getEmail(), question, new Date(), course.getCourse_id()));
     }
 
     @Override
@@ -146,7 +147,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
             return;
         }
 
-        mGetQuestionTask = new GetQuestionsTask(session);
+        mGetQuestionTask = new GetQuestionsTask(course.getCourse_id());
         mGetQuestionTask.execute((Void) null);
     }
 
@@ -155,7 +156,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
             return;
         }
 
-        mSendQuestionTask = new SendQuestionTask(session, question);
+        mSendQuestionTask = new SendQuestionTask(course.getCourse_id(), question);
         mSendQuestionTask.execute((Void) null);
     }
 
@@ -165,11 +166,11 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
      */
     public class SendQuestionTask extends AsyncTask<Void, Void, retMsg> {
 
-        private final String session;
+        private final int course_id;
         private final Question question;
 
-        SendQuestionTask(String session, Question question) {
-            this.session = session;
+        SendQuestionTask(int course_id, Question question) {
+            this.course_id = course_id;
             this.question = question;
         }
 
@@ -214,10 +215,10 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
      */
     public class GetQuestionsTask extends AsyncTask<Void, Void, retMsg> {
 
-        private final String session;
+        private final int course_id;
 
-        GetQuestionsTask(String session) {
-            this.session = session;
+        GetQuestionsTask(int course_id) {
+            this.course_id = course_id;
         }
 
         @Override

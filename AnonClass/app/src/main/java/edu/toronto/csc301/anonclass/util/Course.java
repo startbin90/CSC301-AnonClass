@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class Course implements SerializableInfo {
+public class Course extends SerializableInfo {
 
-    private int id;
+    private int course_id;
     private String course_code;
     private String course_name;
     private String section_number;
@@ -76,7 +76,7 @@ public class Course implements SerializableInfo {
     }
 
     private Course(int course_id, String course_code, String course_name, String section_number, String instructor_email, String instructor_name, Date time_created, String locations) {
-        this.id = course_id;
+        this.course_id = course_id;
         this.course_code = course_code;
         this.course_name = course_name;
         this.section_number = section_number;
@@ -86,12 +86,12 @@ public class Course implements SerializableInfo {
         this.locations = locations;
     }
 
-    public int getId() {
-        return id;
+    public int getCourse_id() {
+        return course_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCourse_id(int course_id) {
+        this.course_id = course_id;
     }
 
     public String getCourse_code() {
@@ -168,11 +168,6 @@ public class Course implements SerializableInfo {
         return s;
     }
 
-    @Override
-    public String serialize() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
-    }
 
     public static Course deSerialize(String Json) {
         Gson gson = new GsonBuilder().create();
