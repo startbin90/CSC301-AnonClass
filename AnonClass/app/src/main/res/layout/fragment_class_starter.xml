@@ -51,26 +51,26 @@
             android:text="Fall 2018"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:id="@+id/text_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Status:  "
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+            <!--<TextView-->
+                <!--android:id="@+id/text_status"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Status:  "-->
+                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />-->
 
-            <TextView
-                android:id="@+id/status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Off"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
-        </LinearLayout>
+            <!--<TextView-->
+                <!--android:id="@+id/status"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Off"-->
+                <!--android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />-->
+        <!--</LinearLayout>-->
 
 
     </LinearLayout>
