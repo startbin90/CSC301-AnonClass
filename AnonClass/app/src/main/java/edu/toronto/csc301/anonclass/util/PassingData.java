@@ -1,5 +1,7 @@
 package edu.toronto.csc301.anonclass.util;
 
+import android.location.Location;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -125,21 +127,6 @@ public class PassingData {
 
     }
 
-
-    // instructor create a course, success return 1, fail return -1
-    public static retMsg CreateCourse(Course course) {
-
-        ArrayList<String> results = passing("create", 1, course.serialize());
-
-        if (results != null) {
-            return retMsg.getErrorRet(Integer.parseInt(results.get(0)));
-        } else {
-            return retMsg.getErrorRet(-1);
-        }
-
-
-    }
-
     // get status of this session
     public static retMsg GetStatus(int courseId) {
         HashMap<String, Object> infoMap = new HashMap<String, Object>();
@@ -161,9 +148,17 @@ public class PassingData {
         }
     }
 
-    // prof start session
-    public static retMsg StartSession(Session session){
-        ArrayList<String> results = passing("open session", 1, session.serialize());
+    // student join the session
+    public static retMsg JoinSession(String email, int courseId, Location location) {
+
+        HashMap<String, Object> infoMap = new HashMap<String, Object>();
+        infoMap.put("email", email);
+        infoMap.put("course_id", courseId);
+        infoMap.put("location", location);
+
+        String info = gson.toJson(infoMap);
+
+        ArrayList<String> results = passing("Join Session", 1, info);
 
         if (results != null) {
             return retMsg.getErrorRet(Integer.parseInt(results.get(0)));
@@ -172,19 +167,22 @@ public class PassingData {
         }
     }
 
-    // TODO: student join the session
-    public static retMsg JoinSession() {
-
-        return retMsg.getErrorRet(0);
-    }
-
     // ask question
     public static retMsg AskingQuestion(Question question) {
 
-        ArrayList<String> results = passing("Ask Question", 1, question.serialize());
+        ArrayList<String> results = passing("Ask Question", 2, question.serialize());
 
         if (results != null) {
-            return retMsg.getErrorRet(Integer.parseInt(results.get(0)));
+            int error = Integer.parseInt(results.get(0));
+            if (error == 1) {
+                return retMsg.getErrorRet(1);
+            }
+
+            Type listType = new TypeToken<ArrayList<Question>>() {
+            }.getType();
+            ArrayList<Question> questions = gson.fromJson(results.get(1), listType);
+
+            return retMsg.getQuestionsRet(0, questions);
         } else {
             return retMsg.getErrorRet(-1);
         }
@@ -211,6 +209,7 @@ public class PassingData {
         }
     }
 
+    // helper
     // return an array of information
     // index 0 is error flag, index 1 is returned Json string
     private static ArrayList<String> passing(String instruction, int length, String info) {
@@ -222,7 +221,6 @@ public class PassingData {
             PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
             out.println(instruction + "\n" + info);
-
 
             ArrayList<String> results = new ArrayList<>();
             for (int i = 0; i < length; i++) {
