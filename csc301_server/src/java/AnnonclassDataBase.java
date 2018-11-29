@@ -80,7 +80,7 @@ public class AnnonclassDataBase {
             if (!psw_hash.equals(password)) {
                 return null;
             } else {
-                PreparedStatement courses = connection.prepareStatement("select course_name, course_code, " +
+                PreparedStatement courses = connection.prepareStatement("select course_section.id, course_name, course_code, " +
                                 "section_number, instructor_email, instructor_name, time_created, locations " +
                                 "from dbschema.course_user, " +
                                 "dbschema.course_section " +
@@ -91,13 +91,14 @@ public class AnnonclassDataBase {
                 ResultSet re = courses.executeQuery();
                 while(re.next()) {
                     JSONObject course = new JSONObject();
-                    course.put("course_name", re.getString(1));
-                    course.put("course_code", re.getString(2));
-                    course.put("section_number", re.getString(3));
-                    course.put("instructor_email", re.getString(4));
-                    course.put("instructor_name", re.getString(5));
-                    course.put("time_created", re.getDate(6));
-                    course.put("location", re.getString(7));
+                    course.put("course_id", re.getInt(1));
+                    course.put("course_name", re.getString(2));
+                    course.put("course_code", re.getString(3));
+                    course.put("section_number", re.getString(4));
+                    course.put("instructor_email", re.getString(5));
+                    course.put("instructor_name", re.getString(6));
+                    course.put("time_created", re.getDate(7));
+                    course.put("location", re.getString(8));
                     ar.put(course);
                 }
                 JSONObject user = new JSONObject();
@@ -174,7 +175,7 @@ public class AnnonclassDataBase {
         ResultSet resultSet = exec.executeQuery();
         while (resultSet.next()) {
             JSONObject course = new JSONObject();
-            course.put("id", resultSet.getInt(1));
+            course.put("course_id", resultSet.getInt(1));
             course.put("course_code", course_code);
             course.put("course_name", resultSet.getString(3));
             course.put("section_number", resultSet.getString(4));

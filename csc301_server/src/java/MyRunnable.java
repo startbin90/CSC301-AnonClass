@@ -1,3 +1,4 @@
+import com.mysql.cj.Session;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -6,6 +7,7 @@ import java.net.Socket;
 import java.sql.*;
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.List;
 
 public class MyRunnable implements Runnable {
     private Socket client;
@@ -20,7 +22,7 @@ public class MyRunnable implements Runnable {
     public void run() {
 
         try {
-            Questions Questions = new Questions();
+            SessionStorage SessionStorage = new SessionStorage();
             BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             PrintWriter out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()), true);
             AnnonclassDataBase db = new AnnonclassDataBase();
@@ -28,6 +30,12 @@ public class MyRunnable implements Runnable {
             String request = in.readLine();
             System.out.println(request);
             JSONObject info  = new JSONObject(in.readLine());
+            SessionInfo s = new SessionInfo(new Tuple(1,1));
+//            JSONObject q = new JSONObject();
+//            q.
+//            s.addQuestions();
+//            s.addQuestions();
+            SessionStorage.addSession("2", s);
             System.out.println(info);
             try {
                 if (request.equals("Sign up")) {
@@ -46,12 +54,23 @@ public class MyRunnable implements Runnable {
                     int res = db.enroll_course(info);
                     out.println(res);
                 } else if (request.equals("Create")) {
+                    //Create course. Connection from web.
                     out.println(db.addCourse(info));
                 } else if (request.equals("Ask Question")) {
-                    String session = Integer.toString(info.getInt("session"));
-//                    Questions.addSession(session);
-                    Questions.addQuestion(session, info.toString());
-                    out.println(0);
+                    int course_id = info.getInt("course_id");
+                    SessionInfo sessionInfo = SessionStorage.getSessionInfo(Integer.toString(course_id));
+                    if (sessionInfo == null) {
+                        out.println(1);
+                    } else {
+                        sessionInfo.addQuestions(info);
+                        out.println(0);
+                        List<JSONObject> questions = sessionInfo.getQuestions();
+                        JSONArray ret= new JSONArray();
+                        for (JSONObject q:questions) {
+                            ret.put(q);
+                        }
+                        out.println(ret);
+                    }
 
                 } else if (request.equals("Display courses")) {
                     JSONArray ar = db.display(info);
@@ -67,12 +86,34 @@ public class MyRunnable implements Runnable {
                     out.println(0);
                     out.println(user);
                 } else if (request.equals("Open Session")) {
-                    if (Questions.getHashtable().containsKey(info.getString("session"))) {
+                    //TO DO (Connection from web)
+                } else if (request.equals("Join Session")) {
+                    int course_id = info.getInt("course_id");
+                    String email = info.getString("email");
+//                    int x = info.getInt("x");
+//                    int y = info.getInt("y");
+//                    Tuple location = new Tuple(x,y);
+                    double latitude = info.getDouble("latitude");
+                    double longitude = info.getDouble("longitude");
+                    Tuple location = new Tuple(latitude, longitude);
+                    SessionInfo sessionInfo = SessionStorage.getSessionInfo(Integer.toString(course_id));
+                    if (sessionInfo == null) {
                         out.println(1);
                     } else {
-                        Questions.addSession(info.getString("session"));
+                        sessionInfo.joinSession(email, location);
                         out.println(0);
                     }
+                } else if (request.equals("Refresh")) {
+                    int course_id = info.getInt("course_id");
+                    SessionInfo sessionInfo = SessionStorage.getSessionInfo(Integer.toString(course_id));
+                    List<JSONObject> questions = sessionInfo.getQuestions();
+                    JSONArray ret= new JSONArray();
+                    for (JSONObject q:questions) {
+                        ret.put(q);
+                    }
+                    out.println(0);
+                    out.println(ret);
+
                 }
             } catch (SQLException unhandled) {
                 unhandled.printStackTrace();

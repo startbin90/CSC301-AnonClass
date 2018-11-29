@@ -4,6 +4,7 @@ public class Server {
         SocketServer sc = new SocketServer();
         sc.runServer();
 
+
 //        AnnonclassDataBase db = new AnnonclassDataBase();
 //        db.connectDB("jdbc:postgresql://localhost:5432/anonclass");
 //        db.connectDB("jdbc:postgresql://anonclass.cszu4qtoxymw.us-east-1.rds.amazonaws.com:5432/mydb");
