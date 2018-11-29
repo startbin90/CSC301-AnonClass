@@ -143,6 +143,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
 
         if (!isLocationSet) {
             Toast.makeText(getContext(), "Location not set", Toast.LENGTH_SHORT).show();
+            return;
         }
 
        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course.getCourse_id(), latitude, longitude));

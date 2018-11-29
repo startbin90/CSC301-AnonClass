@@ -163,16 +163,6 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
             //       related to the search string
 
             return PassingData.ShowRelatedCourses(search);
-
-//            try {
-//                // Simulate network access.
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                return null;
-//            }
-//            retMsg ret = retMsg.getSearchedRet(0, Course.getSearchedDummyCourses());
-//
-//            return ret;
         }
 
         @Override
@@ -183,7 +173,8 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
                 JoinClassFragment.this.updateSearched(ret.getSearched());
 
             } else {
-                Toast.makeText(JoinClassFragment.this.getContext(), "search failed", Toast.LENGTH_SHORT).show();
+                JoinClassFragment.this.updateSearched(new ArrayList<Course>());
+                Toast.makeText(JoinClassFragment.this.getContext(), "No results", Toast.LENGTH_SHORT).show();
             }
         }
 
