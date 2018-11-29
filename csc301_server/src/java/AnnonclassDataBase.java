@@ -80,7 +80,7 @@ public class AnnonclassDataBase {
             if (!psw_hash.equals(password)) {
                 return null;
             } else {
-                PreparedStatement courses = connection.prepareStatement("select course_name, course_code, " +
+                PreparedStatement courses = connection.prepareStatement("select course_section.id, course_name, course_code, " +
                                 "section_number, instructor_email, instructor_name, time_created, locations " +
                                 "from dbschema.course_user, " +
                                 "dbschema.course_section " +
@@ -91,13 +91,14 @@ public class AnnonclassDataBase {
                 ResultSet re = courses.executeQuery();
                 while(re.next()) {
                     JSONObject course = new JSONObject();
-                    course.put("course_name", re.getString(1));
-                    course.put("course_code", re.getString(2));
-                    course.put("section_number", re.getString(3));
-                    course.put("instructor_email", re.getString(4));
-                    course.put("instructor_name", re.getString(5));
-                    course.put("time_created", re.getDate(6));
-                    course.put("location", re.getString(7));
+                    course.put("course_id", re.getInt(1));
+                    course.put("course_name", re.getString(2));
+                    course.put("course_code", re.getString(3));
+                    course.put("section_number", re.getString(4));
+                    course.put("instructor_email", re.getString(5));
+                    course.put("instructor_name", re.getString(6));
+                    course.put("time_created", re.getDate(7));
+                    course.put("location", re.getString(8));
                     ar.put(course);
                 }
                 JSONObject user = new JSONObject();
@@ -114,7 +115,6 @@ public class AnnonclassDataBase {
     }
     
     public int addCourse(JSONObject info) throws SQLException, ParseException {
-
         //get instructor email, instructor name, location, section number
         String instructor_email = info.getString("instructor_email");
         String instructor_name = info.getString("instructor_name");
@@ -137,7 +137,7 @@ public class AnnonclassDataBase {
                 return 1;
             } else {
                 PreparedStatement execStat2 = connection.prepareStatement("select * from dbschema.course_section " +
-                        "where course_name = ? and section_number = ?;", ResultSet.TYPE_SCROLL_SENSITIVE,
+                                "where course_name = ? and section_number = ?;", ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
                 execStat2.setString(1, course_name);
                 execStat2.setString(2, section_number);
@@ -175,7 +175,7 @@ public class AnnonclassDataBase {
         ResultSet resultSet = exec.executeQuery();
         while (resultSet.next()) {
             JSONObject course = new JSONObject();
-            course.put("id", resultSet.getInt(1));
+            course.put("course_id", resultSet.getInt(1));
             course.put("course_code", course_code);
             course.put("course_name", resultSet.getString(3));
             course.put("section_number", resultSet.getString(4));
@@ -221,10 +221,11 @@ public class AnnonclassDataBase {
             ResultSet resultSet2 = exec2.executeQuery();
             if (isResultSetEmpty(resultSet2)) {
                 // client has not enrolled this course yet.
-                PreparedStatement exec3 = connection.prepareStatement("insert into dnschma.course_user" +
+                PreparedStatement exec3 = connection.prepareStatement("insert into dbschema.course_user" +
                         "(selected_course, user_email)values(?, ?);");
                 exec3.setInt(1, id);
                 exec3.setString(2, email);
+                exec3.executeUpdate();
                 return 0;
             } else {
                 // client has already enrolled
@@ -233,9 +234,53 @@ public class AnnonclassDataBase {
         }
     }
 
+    public JSONObject display_enrolled_courses(JSONObject info) throws SQLException{
+        String email = info.getString("email");
+        JSONObject user = new JSONObject();
+        JSONArray courses = new JSONArray();
+        PreparedStatement exec1 = connection.prepareStatement("select email, utorid, firstname, lastname, " +
+                "studentFlag from dbschema.client where email = ?");
+        exec1.setString(1, email);
+        ResultSet res1 = exec1.executeQuery();
+        while (res1.next()) {
+            user.put("email", res1.getString(1));
+            user.put("utorid", res1.getString(2));
+            user.put("firstname", res1.getString(3));
+            user.put("lastname", res1.getString(4));
+            user.put("studentFlag", res1.getBoolean(5));
+        }
+        PreparedStatement exec2 = connection.prepareStatement("select course_name, course_code, " +
+                        "section_number, instructor_email, instructor_name, time_created, locations " +
+                        "from dbschema.course_user, " +
+                        "dbschema.course_section " +
+                        "where dbschema.course_user.selected_course = dbschema.course_section.id " +
+                        "and dbschema.course_user.user_email = ?;", ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+        exec2.setString(1, email);
+        ResultSet res2 = exec2.executeQuery();
+        while (res2.next()) {
+            JSONObject course = new JSONObject();
+            course.put("course_name", res2.getString(1));
+            course.put("course_code", res2.getString(2));
+            course.put("section_number", res2.getString(3));
+            course.put("instructor_email", res2.getString(4));
+            course.put("instructor_name", res2.getString(5));
+            course.put("time_created", res2.getDate(6));
+            course.put("location", res2.getString(7));
+            courses.put(course);
+        }
+        user.put("courses", courses);
+        return user;
+    }
+
 
     private static boolean isResultSetEmpty(ResultSet resultSet) throws SQLException {
         return !resultSet.first();
 
     }
+
+
+
+
+
 }
