@@ -259,7 +259,9 @@ public class AnonClassActivity extends AppCompatActivity
         @Override
         protected retMsg doInBackground(Void... params) {
             // TODO: mEmail attempt to request join course_id, expect success or fail
-
+            if (LoginActivity.DEBUG == 1){
+                return retMsg.getErrorRet(0);
+            }
             return PassingData.EnrolCourse(mEmail, course_id);
         }
 
@@ -299,14 +301,11 @@ public class AnonClassActivity extends AppCompatActivity
             //       user obj, this is similar to what was done in login process.
             //       we update the user object all together here
 
-            /*try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
+            if (LoginActivity.DEBUG == 1){
+                User user = User.fakeUserFromServer("csc301@test.com", "abcde123",
+                        "Henry", "Liao",true, Course.getUpdatedEnrolledDummyCourses());
+                return retMsg.getUserRet(0, user);
             }
-            User user = User.fakeUserFromServer("csc301@test.com", "abcde123",
-                    "Henry", "Liao",true, Course.getUpdatedEnrolledDummyCourses());*/
 
             return PassingData.DisplayCourses(mEmail);
         }
