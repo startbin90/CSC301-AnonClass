@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.List;
 
-public class retMsg implements SerializableInfo {
+public class retMsg extends SerializableInfo {
 
     private int errorCode;
     private User user;
@@ -86,11 +86,6 @@ public class retMsg implements SerializableInfo {
         this.questions = questions;
     }
 
-    @Override
-    public String serialize() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
-    }
 
     public static retMsg deSerialize(String Json) {
         Gson gson = new Gson();

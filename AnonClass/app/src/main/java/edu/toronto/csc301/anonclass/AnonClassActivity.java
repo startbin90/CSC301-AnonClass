@@ -1,18 +1,28 @@
 package edu.toronto.csc301.anonclass;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
@@ -25,7 +35,7 @@ public class AnonClassActivity extends AppCompatActivity
         implements EnrolledClassFragment.OnListFragmentInteractionListener,
         CreateClassFragment.OnFragmentInteractionListener,
         JoinClassFragment.OnFragmentInteractionListener,
-        ClassStarterFragment.OnClassStarterFragmentInteractionListener{
+        ClassStarterFragment.OnClassStarterFragmentInteractionListener {
 
     /**
      * current fragment loaded
@@ -34,6 +44,8 @@ public class AnonClassActivity extends AppCompatActivity
     private User user;
     private GetEnrolledClassTask mGetInfoTask;
     private JoinClassTask mJoinClassTask;
+
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -80,7 +92,7 @@ public class AnonClassActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anon_class);
         String json;
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             json = savedInstanceState.getString("user");
         } else {
             json = getIntent().getStringExtra("user");
@@ -92,7 +104,24 @@ public class AnonClassActivity extends AppCompatActivity
         displaySelectedScreen(R.id.navigation_home);
         navigation.getMenu().getItem(0).setChecked(true);
 
-        //attemptGetInfo();
+        String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                ActivityCompat.requestPermissions(AnonClassActivity.this,
+                        permissions,
+                        1234);
+            }
+        } else {
+            ActivityCompat.requestPermissions(AnonClassActivity.this,
+                    permissions,
+                    1234);
+        }
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     private void attemptGetInfo() {
@@ -105,7 +134,7 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState){
+    public void onSaveInstanceState(Bundle savedInstanceState) {
         System.out.println("onSaveInstanceState");
         savedInstanceState.putString("user", user.serialize());
         super.onSaveInstanceState(savedInstanceState);
@@ -113,8 +142,7 @@ public class AnonClassActivity extends AppCompatActivity
 
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState)
-    {
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         System.out.println("onRestoreInstanceState");
@@ -129,7 +157,7 @@ public class AnonClassActivity extends AppCompatActivity
     public void onClassClickedFromEnrolledClassFragment(Course course) {
         FragmentManager manager = getSupportFragmentManager();
         BottomSheetDialogFragment bottomSheet = ClassStarterFragment.newInstance(user, course);
-        assert manager != null: "getFragmentManager failed, get null object instead";
+        assert manager != null : "getFragmentManager failed, get null object instead";
         bottomSheet.show(manager, "ClassStarterFragment");
     }
 
@@ -143,8 +171,8 @@ public class AnonClassActivity extends AppCompatActivity
         return user.getStudentFlag();
     }
 
-    private void postExecute(){
-        if (current_fragment instanceof EnrolledClassFragment){
+    private void postExecute() {
+        if (current_fragment instanceof EnrolledClassFragment) {
             ((EnrolledClassFragment) current_fragment).onRefreshFinished();
         }
     }
@@ -182,16 +210,35 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     private void attemptJoinClass(Course course) {
-        if (mJoinClassTask!= null) {
+        if (mJoinClassTask != null) {
             return;
         }
 
-        mJoinClassTask = new JoinClassTask(user.getEmail(), course.getId());
+        mJoinClassTask = new JoinClassTask(user.getEmail(), course.getCourse_id());
         mJoinClassTask.execute((Void) null);
     }
 
     @Override
-    public void onFragmentInteractionFromClassStarterFrag() {
+    public void onGetLocationFromClassStarterFrag() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+        } else {
+
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    ClassStarterFragment frag = (ClassStarterFragment) getSupportFragmentManager().findFragmentByTag("ClassStarterFragment");
+                    frag.onLocationUpdated(location);
+                }
+            });
+        }
 
     }
 

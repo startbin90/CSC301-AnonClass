@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User implements SerializableInfo {
+public class User extends SerializableInfo {
     private String email;
     private String pwdHash;
     private String utorid;
@@ -156,11 +156,6 @@ public class User implements SerializableInfo {
         return user2 instanceof User && ((User) user2).email.equals(this.email);
     }
 
-    @Override
-    public String serialize() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
-    }
 
     public static User deSerialize(String Json) {
         Gson gson = new GsonBuilder().create();
