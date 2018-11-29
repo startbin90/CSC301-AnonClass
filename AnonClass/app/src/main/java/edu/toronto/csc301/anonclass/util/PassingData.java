@@ -186,8 +186,12 @@ public class PassingData {
     }
 
     // refresh question room page
-    public static retMsg RefreshQuestionRoom(Question question) {
-        ArrayList<String> results = passing("refresh room", 2, question.serialize());
+    public static retMsg RefreshQuestionRoom(int id) {
+        HashMap<String, Object> infoMap = new HashMap<String, Object>();
+        infoMap.put("course_id", id);
+        String info = gson.toJson(infoMap);
+
+        ArrayList<String> results = passing("refresh", 2, info);
 
         if (results != null) {
             int error = Integer.parseInt(results.get(0));
