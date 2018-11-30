@@ -1,10 +1,18 @@
 package edu.toronto.csc301.anonclass;
-
+import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
+
+import android.support.design.widget.CoordinatorLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,32 +20,46 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.Session;
 import edu.toronto.csc301.anonclass.util.User;
+import edu.toronto.csc301.anonclass.util.mLocationGetter;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
 /**
  *
  */
-public class ClassStarterFragment extends BottomSheetDialogFragment {
+public class ClassStarterFragment extends BottomSheetDialogFragment implements OnMapReadyCallback {
 
     private OnClassStarterFragmentInteractionListener mListener;
-    private GetClassStatusTask mGetClassStatusTask;
     private attendClassTask mAttendClassTask;
     private TextView mCourseCode;
     private TextView mCourseName;
     private TextView mSection;
     private TextView mInstructor;
     private TextView mTime;
-    private TextView statusView;
-    private int classStatus = -1; // -1 unknown, 0 on, 1 off
     private Course course;
     private User user;
     private boolean isLocationSet = false;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
+    private Location location;
+    private static String TAG = "ClassStarterFragment";
+    private static String MAP_VIEW_BOUDLE_KEY = "mapViewBundleKey";
 
+    private MapView mMapView;
+    private GoogleMap map;
+    private mLocationGetter.LocationResult locationResult;
     public static ClassStarterFragment newInstance(User user, Course course){
         ClassStarterFragment obj = new ClassStarterFragment();
         obj.course = course;
@@ -59,7 +81,6 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         mSection = view.findViewById(R.id.section);
         mInstructor = view.findViewById(R.id.instructor);
         mTime = view.findViewById(R.id.time);
-        statusView = view.findViewById(R.id.status);
 
         mCourseCode.setText(course.getCourse_code());
         mCourseName.setText(course.getCourse_name());
@@ -67,13 +88,52 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         mInstructor.setText(course.getInstructor_name());
         mTime.setText(course.getTime_created());
 
+        mMapView = view.findViewById(R.id.mapView);
+        Bundle mapViewBundle = null;
+        if (savedInstanceState != null){
+            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BOUDLE_KEY);
+        }
+        mMapView.onCreate(mapViewBundle);
+        mMapView.getMapAsync(this);
+
+
+        locationResult = new mLocationGetter.LocationResult(){
+            @Override
+            public void gotLocation(Location location){
+                //Got the location!
+                onLocationUpdated(location);
+                if (location != null){
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                            .zoom(16)                   // Sets the zoom
+                            .bearing(0)                // Sets the orientation of the camera to east
+                            .tilt(0)                   // Sets the tilt of the camera to 30 degrees
+                            .build();                   // Creates a CameraPosition from the builder
+                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                    CircleOptions circleOptions = new CircleOptions();
+                    circleOptions.center(new LatLng(location.getLatitude(), location.getLongitude()));
+                    circleOptions.radius(30);
+                    circleOptions.strokeColor(R.color.dividerGrey);
+                    circleOptions.fillColor(R.color.transBlue);
+                    circleOptions.strokeWidth(2);
+                    map.addCircle(circleOptions);
+                }
+                Log.d(TAG, String.format("lat: %.2f; long: %.2f", location.getLatitude(), location.getLongitude()));
+            }
+        };
+
         Button location = view.findViewById(R.id.location);
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: attempt to get user's location and set latitude and longitude attributes
 
-                setLocation(0,0);
+                mLocationGetter myLocation = new mLocationGetter();
+                myLocation.getLocation(getContext(), locationResult);
+
             }
         });
 
@@ -84,6 +144,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
                 attemptJoinClass();
             }
         });
+
 
         return view;
     }
@@ -97,13 +158,86 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        attemptGetClassStatus();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Bundle mapViewBundle = outState.getBundle(MAP_VIEW_BOUDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAP_VIEW_BOUDLE_KEY, mapViewBundle);
+        }
+
+        mMapView.onSaveInstanceState(mapViewBundle);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mMapView.onStart();
+        Dialog dialog = getDialog();
+
+        if (dialog != null) {
+            final View bottomSheet = dialog.findViewById(R.id.design_bottom_sheet);
+            bottomSheet.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+            final View view = getView();
+            view.post(new Runnable() {
+                @Override
+                public void run() {
+                    View parent = (View) view.getParent();
+                    CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) (parent).getLayoutParams();
+                    CoordinatorLayout.Behavior behavior = params.getBehavior();
+                    BottomSheetBehavior bottomSheetBehavior = (BottomSheetBehavior) behavior;
+                    bottomSheetBehavior.setPeekHeight(view.getMeasuredHeight());
+                    //((View)bottomSheet.getParent()).setBackgroundColor(Color.TRANSPARENT);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mMapView.onStop();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        this.map = map;
+        mLocationGetter myLocation = new mLocationGetter();
+        myLocation.getLocation(getContext(), locationResult);
+    }
+
+    @Override
+    public void onPause() {
+        mMapView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mMapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mMapView.onLowMemory();
     }
 
     /**
@@ -113,22 +247,12 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
      * activity.
      */
     public interface OnClassStarterFragmentInteractionListener {
-        void onFragmentInteractionFromClassStarterFrag();
+        void onGetLocationFromClassStarterFrag();
     }
 
-    private void setLocation(float latitude, float longitude){
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public void onLocationUpdated(Location loc){
         this.isLocationSet = true;
-    }
-    private void updateStatus(int status){
-        if (status == 0){
-            this.statusView.setText("On");
-            this.classStatus = 0;
-        } else if (status == 1){
-            this.statusView.setText("Off");
-            this.classStatus = 1;
-        }
+        this.location = loc;
     }
 
     private void attemptJoinClass(){
@@ -137,20 +261,12 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         }
 
         if (!isLocationSet) {
+            Toast.makeText(getContext(), "Location not set", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course, latitude, longitude));
+        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course.getCourse_id(), latitude, longitude));
         mAttendClassTask.execute((Void) null);
-    }
-
-    private void attemptGetClassStatus(){
-        if (mGetClassStatusTask != null) {
-            return;
-        }
-
-        mGetClassStatusTask = new GetClassStatusTask(course.getCourse_id());
-        mGetClassStatusTask.execute((Void) null);
     }
 
     public class attendClassTask extends AsyncTask<Void, Void, retMsg> {
@@ -165,78 +281,32 @@ public class ClassStarterFragment extends BottomSheetDialogFragment {
         protected retMsg doInBackground(Void... params) {
             // TODO: attempt to request join or open a class, expect a session number
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
+            if (LoginActivity.DEBUG == 1){
+                return retMsg.getErrorRet(0);
             }
-
-            return retMsg.getErrorRet(0);
+            return PassingData.JoinSession(session);
         }
 
         @Override
         protected void onPostExecute(final retMsg ret) {
-            mGetClassStatusTask = null;
+            mAttendClassTask = null;
 
             if (ret.getErrorCode() == 0) {
                 Intent launch = new Intent(ClassStarterFragment.this.getContext(),  InClassActivity.class);
                 launch.putExtra("user", user.serialize());
-                launch.putExtra("session_num", ret.getStringExtra());
+                launch.putExtra("course", course.serialize());
                 ClassStarterFragment.this.startActivity(launch);
             } else {
                 Toast.makeText(ClassStarterFragment.this.getContext(),
-                        "get class status failed", Toast.LENGTH_SHORT).show();
+                        "attend class failed", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mGetClassStatusTask = null;
+            mAttendClassTask = null;
             //showProgress(false);
         }
     }
-    /**
-     * Represents an asynchronous task getting class status
-     */
-    public class GetClassStatusTask extends AsyncTask<Void, Void, retMsg> {
 
-        private final int class_id;
-
-        GetClassStatusTask(int class_id) {
-            this.class_id = class_id;
-        }
-
-        @Override
-        protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to get class status 0 on 1 off, -1 error
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
-
-            return retMsg.getErrorRet(0);
-        }
-
-        @Override
-        protected void onPostExecute(final retMsg ret) {
-            mGetClassStatusTask = null;
-
-            if (!(ret.getErrorCode() == -1)) {
-                ClassStarterFragment.this.updateStatus(ret.getErrorCode());
-            } else {
-                Toast.makeText(ClassStarterFragment.this.getContext(),
-                        "get class status failed", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mGetClassStatusTask = null;
-            //showProgress(false);
-        }
-    }
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class Course implements EnclosedInfo {
+public class Course extends SerializableInfo {
 
     private int course_id;
     private String course_code;
@@ -20,7 +20,7 @@ public class Course implements EnclosedInfo {
     private Date time_created;
     private String locations;
 
-    public static List<Course> getDummyCourses(){
+    public static List<Course> getEnrolledDummyCourses(){
         List<Course> lst = new ArrayList<>();
         lst.add(new Course(1, "csc301","Intro to Software Engineering",
                 "L0101", "emailM","Mark", new Date(), "BA 1210"));
@@ -28,6 +28,37 @@ public class Course implements EnclosedInfo {
                 "L0101", "emailD","David", new Date(), "SS 1234"));
         return lst;
     }
+
+    public static List<Course> getUpdatedEnrolledDummyCourses(){
+        List<Course> lst = new ArrayList<>();
+        lst.add(new Course(1, "csc301","Intro to Software Engineering",
+                "L0101", "emailM","Mark", new Date(), "BA 1210"));
+        lst.add(new Course(2,"csc324","Principle of Programming Language",
+                "L0101", "emailD","David", new Date(), "SS 1234"));
+        lst.add(new Course(3,"csc369","Operating System",
+                "L0101", "emailD","Karen", new Date(), "LM 120"));
+        return lst;
+    }
+
+    public static List<Course> getSearchedDummyCourses(){
+        List<Course> lst = new ArrayList<>();
+        lst.add(new Course(1, "csc301","Intro to Software Engineering",
+                "L0101", "emailM","Mark", new Date(), "BA 1210"));
+        lst.add(new Course(2,"csc301","Intro to Software Engineering",
+                "L0501", "emailD","David", new Date(), "BA 1234"));
+        return lst;
+    }
+
+    public static List<Course> getTeachersDummyCourses(){
+        List<Course> lst = new ArrayList<>();
+        lst.add(new Course(1, "csc301","Intro to Software Engineering",
+                "L0501", "emailM","Mark", new Date(), "BA 1210"));
+        lst.add(new Course(2,"csc309","Programming on the Web",
+                "L0101", "emailD","Mark", new Date(), "BA 1234"));
+        return lst;
+    }
+
+
 
     public static Course getCreatedCourse(String course_code, String course_name, String section,
                                           String email, String instructor, String locations){
@@ -137,11 +168,6 @@ public class Course implements EnclosedInfo {
         return s;
     }
 
-    @Override
-    public String serialize() {
-        Gson gson = new GsonBuilder().create();
-        return gson.toJson(this);
-    }
 
     public static Course deSerialize(String Json) {
         Gson gson = new GsonBuilder().create();

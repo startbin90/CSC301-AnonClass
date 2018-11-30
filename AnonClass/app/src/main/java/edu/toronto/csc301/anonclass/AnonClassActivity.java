@@ -1,20 +1,33 @@
 package edu.toronto.csc301.anonclass;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
@@ -22,7 +35,7 @@ public class AnonClassActivity extends AppCompatActivity
         implements EnrolledClassFragment.OnListFragmentInteractionListener,
         CreateClassFragment.OnFragmentInteractionListener,
         JoinClassFragment.OnFragmentInteractionListener,
-        ClassStarterFragment.OnClassStarterFragmentInteractionListener{
+        ClassStarterFragment.OnClassStarterFragmentInteractionListener {
 
     /**
      * current fragment loaded
@@ -31,6 +44,8 @@ public class AnonClassActivity extends AppCompatActivity
     private User user;
     private GetEnrolledClassTask mGetInfoTask;
     private JoinClassTask mJoinClassTask;
+
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -77,7 +92,7 @@ public class AnonClassActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anon_class);
         String json;
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             json = savedInstanceState.getString("user");
         } else {
             json = getIntent().getStringExtra("user");
@@ -89,7 +104,24 @@ public class AnonClassActivity extends AppCompatActivity
         displaySelectedScreen(R.id.navigation_home);
         navigation.getMenu().getItem(0).setChecked(true);
 
-        attemptGetInfo();
+        String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                ActivityCompat.requestPermissions(AnonClassActivity.this,
+                        permissions,
+                        1234);
+            }
+        } else {
+            ActivityCompat.requestPermissions(AnonClassActivity.this,
+                    permissions,
+                    1234);
+        }
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     private void attemptGetInfo() {
@@ -101,17 +133,8 @@ public class AnonClassActivity extends AppCompatActivity
         mGetInfoTask.execute((Void) null);
     }
 
-    private void attemptJoinClass(Course course) {
-        if (mJoinClassTask!= null) {
-            return;
-        }
-
-        mJoinClassTask = new JoinClassTask(user.getEmail(), course.getCourse_id());
-        mJoinClassTask.execute((Void) null);
-    }
-
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState){
+    public void onSaveInstanceState(Bundle savedInstanceState) {
         System.out.println("onSaveInstanceState");
         savedInstanceState.putString("user", user.serialize());
         super.onSaveInstanceState(savedInstanceState);
@@ -119,8 +142,7 @@ public class AnonClassActivity extends AppCompatActivity
 
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState)
-    {
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
         System.out.println("onRestoreInstanceState");
@@ -135,7 +157,7 @@ public class AnonClassActivity extends AppCompatActivity
     public void onClassClickedFromEnrolledClassFragment(Course course) {
         FragmentManager manager = getSupportFragmentManager();
         BottomSheetDialogFragment bottomSheet = ClassStarterFragment.newInstance(user, course);
-        assert manager != null: "getFragmentManager failed, get null object instead";
+        assert manager != null : "getFragmentManager failed, get null object instead";
         bottomSheet.show(manager, "ClassStarterFragment");
     }
 
@@ -149,8 +171,8 @@ public class AnonClassActivity extends AppCompatActivity
         return user.getStudentFlag();
     }
 
-    private void postExecute(){
-        if (current_fragment instanceof EnrolledClassFragment){
+    private void postExecute() {
+        if (current_fragment instanceof EnrolledClassFragment) {
             ((EnrolledClassFragment) current_fragment).onRefreshFinished();
         }
     }
@@ -166,12 +188,57 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClassClickedFromJoinClassFragment(Course course) {
-        attemptJoinClass(course);
+    public void onClassClickedFromJoinClassFragment(final Course course) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setMessage("Join this class?");
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        attemptJoinClass(course);
+                        ((BottomSheetDialogFragment) getSupportFragmentManager().
+                                findFragmentByTag("JoinClassFragment")).dismiss();
+                    }
+                });
+        alertDialog.show();
+
+    }
+
+    private void attemptJoinClass(Course course) {
+        if (mJoinClassTask != null) {
+            return;
+        }
+
+        mJoinClassTask = new JoinClassTask(user.getEmail(), course.getCourse_id());
+        mJoinClassTask.execute((Void) null);
     }
 
     @Override
-    public void onFragmentInteractionFromClassStarterFrag() {
+    public void onGetLocationFromClassStarterFrag() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+        } else {
+
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    ClassStarterFragment frag = (ClassStarterFragment) getSupportFragmentManager().findFragmentByTag("ClassStarterFragment");
+                    frag.onLocationUpdated(location);
+                }
+            });
+        }
 
     }
 
@@ -192,33 +259,28 @@ public class AnonClassActivity extends AppCompatActivity
         @Override
         protected retMsg doInBackground(Void... params) {
             // TODO: mEmail attempt to request join course_id, expect success or fail
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
+            if (LoginActivity.DEBUG == 1){
+                return retMsg.getErrorRet(0);
             }
-
-            return retMsg.getErrorRet(0);
+            return PassingData.EnrolCourse(mEmail, course_id);
         }
 
         @Override
         protected void onPostExecute(final retMsg ret) {
-            mGetInfoTask = null;
+            mJoinClassTask = null;
 
             if (ret.getErrorCode() == 0) {
                 AnonClassActivity.this.attemptGetInfo();
 
             } else {
-                Toast.makeText(AnonClassActivity.this, "get info failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AnonClassActivity.this, "join class failed", Toast.LENGTH_SHORT).show();
             }
             postExecute();
         }
 
         @Override
         protected void onCancelled() {
-            mGetInfoTask = null;
+            mJoinClassTask = null;
             //showProgress(false);
         }
     }
@@ -235,18 +297,17 @@ public class AnonClassActivity extends AppCompatActivity
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to get enrolled courses, expect to get a user object
+            // TODO: attempt to get enrolled courses, expect to get a retMsg with error code and
+            //       user obj, this is similar to what was done in login process.
+            //       we update the user object all together here
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
+            if (LoginActivity.DEBUG == 1){
+                User user = User.fakeUserFromServer("csc301@test.com", "abcde123",
+                        "Henry", "Liao",true, Course.getUpdatedEnrolledDummyCourses());
+                return retMsg.getUserRet(0, user);
             }
-            User user = User.userFromServer("csc301@test.com", "abcde123",
-                    "Henry", "Liao",false, Course.getDummyCourses());
 
-            return retMsg.getUserRet(0, user);
+            return PassingData.DisplayCourses(mEmail);
         }
 
         @Override
@@ -254,8 +315,8 @@ public class AnonClassActivity extends AppCompatActivity
             mGetInfoTask = null;
 
             if (ret.getErrorCode() == 0) {
-                AnonClassActivity.this.user = ret.getUser();
-
+                AnonClassActivity.this.user.getCourses().clear();
+                AnonClassActivity.this.user.getCourses().addAll(ret.getUser().getCourses());
             } else {
                 Toast.makeText(AnonClassActivity.this, "get info failed", Toast.LENGTH_SHORT).show();
             }

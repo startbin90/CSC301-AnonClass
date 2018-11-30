@@ -1,9 +1,9 @@
 package edu.toronto.csc301.anonclass;
 
-import android.content.IntentSender;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,13 +11,17 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.Question;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
@@ -39,11 +43,15 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
      */
     private ViewPager mViewPager;
     private User user;
-    private String session;
-    private GetQuestionsTask mGetQuestionTask;
+    private Course course;
     private SendQuestionTask mSendQuestionTask;
     private List<Question> questions = new ArrayList<>();
     private Fragment current_frag = null;
+
+    private HandlerThread mHandlerThread = null;
+    private Handler mHandler = null;
+
+    private static String TAG = "InClassActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +59,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
         setContentView(R.layout.activity_in_class);
 
         user = User.deSerialize(getIntent().getStringExtra("user"));
-        session = getIntent().getStringExtra("session_num");
+        course = Course.deSerialize(getIntent().getStringExtra("course"));
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -68,7 +76,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        attemptGetQuestions();
+        startHandlerThread();
     }
 
 
@@ -97,7 +105,7 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
 
     @Override
     public void onSendClicked(String question) {
-        attemptSendQuestion(new Question(user.getEmail(), question, new Date()));
+        attemptSendQuestion(new Question(user.getEmail(), question, new Date(), course.getCourse_id()));
     }
 
     @Override
@@ -141,50 +149,70 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
         }
     }
 
-    private void attemptGetQuestions() {
-        if (mGetQuestionTask != null) {
-            return;
-        }
-
-        mGetQuestionTask = new GetQuestionsTask(session);
-        mGetQuestionTask.execute((Void) null);
-    }
-
     private void attemptSendQuestion(Question question) {
         if (mSendQuestionTask != null) {
             return;
         }
 
-        mSendQuestionTask = new SendQuestionTask(session, question);
+        mSendQuestionTask = new SendQuestionTask(question);
         mSendQuestionTask.execute((Void) null);
     }
 
+    private void startHandlerThread(){
+        mHandlerThread = new HandlerThread("HandlerThread");
+        mHandlerThread.start();
+        mHandler = new Handler(mHandlerThread.getLooper());
+        mHandler.post(new refreshRunnable());
+    }
+    public class refreshRunnable implements Runnable{
+
+        @Override
+        public void run() {
+
+            final retMsg ret;
+            if (LoginActivity.DEBUG == 1){
+                ret = retMsg.getQuestionsRet(0, Question.getDummyQuestions());
+            }else {
+                ret = PassingData.RefreshQuestionRoom(course.getCourse_id());
+            }
+
+            if (ret.getErrorCode() == 0) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        InClassActivity.this.questions.clear();
+                        InClassActivity.this.questions.addAll(ret.getQuestions());
+                        if (InClassActivity.this.current_frag instanceof ChatRoomFragment) {
+                            ((ChatRoomFragment) InClassActivity.this.current_frag).refreshList();
+                        }
+                    }
+                });
+
+            }else {
+                Log.i(TAG, "get question failed");
+            }
+            mHandler.postDelayed(this, 10000);
+        }
+    }
     /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
+     * send question to server
      */
     public class SendQuestionTask extends AsyncTask<Void, Void, retMsg> {
 
-        private final String session;
         private final Question question;
 
-        SendQuestionTask(String session, Question question) {
-            this.session = session;
+        SendQuestionTask(Question question) {
             this.question = question;
         }
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to send a question to session
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
+            if (LoginActivity.DEBUG == 1){
+                Question.addDummyQuestion(question);
+                return retMsg.getErrorRet(0);
             }
-
-            return retMsg.getErrorRet(0);
+            return PassingData.AskingQuestion(question);
         }
 
         @Override
@@ -193,13 +221,12 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
             //showProgress(false);
 
             if (ret.getErrorCode() == 0) {
-                InClassActivity.this.questions.add(question);
                 if (InClassActivity.this.current_frag instanceof ChatRoomFragment){
-                    ((ChatRoomFragment) InClassActivity.this.current_frag).refreshList();
                     ((ChatRoomFragment) InClassActivity.this.current_frag).message.setText("");
                 }
+                InClassActivity.this.mHandler.post(new refreshRunnable());
             } else {
-
+                Toast.makeText(InClassActivity.this, "Message send failed", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -208,52 +235,4 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
             mSendQuestionTask = null;
         }
     }
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class GetQuestionsTask extends AsyncTask<Void, Void, retMsg> {
-
-        private final String session;
-
-        GetQuestionsTask(String session) {
-            this.session = session;
-        }
-
-        @Override
-        protected retMsg doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return null;
-            }
-
-            return retMsg.getQuestionsRet(0, Question.getDummyQuestions());
-        }
-
-        @Override
-        protected void onPostExecute(final retMsg ret) {
-            mGetQuestionTask = null;
-            //showProgress(false);
-
-            if (ret.getErrorCode() == 0) {
-                InClassActivity.this.questions.clear();
-                InClassActivity.this.questions.addAll(ret.getQuestions());
-                if (InClassActivity.this.current_frag instanceof ChatRoomFragment){
-                    ((ChatRoomFragment) InClassActivity.this.current_frag).refreshList();
-                }
-            } else {
-
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mGetQuestionTask = null;
-        }
-    }
-
 }
