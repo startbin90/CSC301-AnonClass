@@ -1,6 +1,8 @@
 import com.mysql.cj.xdevapi.Session;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -37,4 +39,23 @@ public class SessionStorage {
         si.joinSession(email, location);
         hashtable.put(num, si);
     }
+
+    public static List<String> getFiles(String course_id) {
+        return getSessionInfo(course_id).getFiles();
+    }
+
+    public static JSONArray getFileNames(String course_id) {
+        JSONArray jsonArray = new JSONArray();
+        for (String s :getFiles(course_id)) {
+            jsonArray.put(s);
+        }
+        return jsonArray;
+    }
+
+    public static void addFile(String course_id, String filename) {
+        SessionInfo si = getSessionInfo(course_id);
+        si.addFile(filename);
+        hashtable.put(course_id, si);
+    }
+
 }

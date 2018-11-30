@@ -104,6 +104,24 @@ public class MyRunnable implements Runnable {
                     out.println(0);
                     out.println(ret);
 
+                } else if (request.equals("Show Files")) {
+                    int course_id = info.getInt("course_id");
+                    JSONArray ret = SessionStorage.getFileNames(Integer.toString(course_id));
+                    out.println(0);
+                    out.println(ret);
+
+                } else if (request.equals("Transfer")) {
+                    int course_id = info.getInt("course_id");
+                    String filename = info.getString("filename");
+                    File file = new File(filename);
+                    byte [] mybytearray  = new byte [(int)file.length()];
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    BufferedInputStream bis = new BufferedInputStream(fileInputStream);
+                    bis.read(mybytearray,0,mybytearray.length);
+                    out.println(0);
+                    out.println(mybytearray);
+
+
                 }
             } catch (SQLException unhandled) {
                 unhandled.printStackTrace();
