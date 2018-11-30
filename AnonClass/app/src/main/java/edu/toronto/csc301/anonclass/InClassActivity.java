@@ -1,5 +1,7 @@
 package edu.toronto.csc301.anonclass;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,17 +18,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import edu.toronto.csc301.anonclass.dummy.DummyContent;
 import edu.toronto.csc301.anonclass.util.Course;
+import edu.toronto.csc301.anonclass.util.FileItem;
 import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.Question;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
-public class InClassActivity extends AppCompatActivity implements ChatRoomFragment.OnChatRoomFragmentInteractionListener{
+public class InClassActivity extends AppCompatActivity
+        implements ChatRoomFragment.OnChatRoomFragmentInteractionListener,
+                    FileFragment.OnFileFragmentInteractionListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -46,7 +53,8 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
     private Course course;
     private SendQuestionTask mSendQuestionTask;
     private List<Question> questions = new ArrayList<>();
-    private Fragment current_frag = null;
+    private ChatRoomFragment chat_frag = null;
+    private FileFragment file_frag = null;
 
     private HandlerThread mHandlerThread = null;
     private Handler mHandler = null;
@@ -113,6 +121,14 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
         return questions;
     }
 
+
+    @Override
+    public void onListFragmentInteraction(FileItem file) {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(file.getUrl()));
+        startActivity(i);
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -129,13 +145,11 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position){
                 case 0:
-                    Fragment frag = ChatRoomFragment.newInstance();
-                    current_frag = frag;
-                    return frag;
+                    chat_frag = ChatRoomFragment.newInstance();
+                    return chat_frag;
                 case 1:
-                    return ChatRoomFragment.newInstance();
-                case 2:
-                    return ChatRoomFragment.newInstance();
+                    file_frag = new FileFragment();
+                    return file_frag;
                 default:
                     return ChatRoomFragment.newInstance();
             }
@@ -144,8 +158,8 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 2 total pages.
+            return 2;
         }
     }
 
@@ -182,8 +196,8 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
                     public void run() {
                         InClassActivity.this.questions.clear();
                         InClassActivity.this.questions.addAll(ret.getQuestions());
-                        if (InClassActivity.this.current_frag instanceof ChatRoomFragment) {
-                            ((ChatRoomFragment) InClassActivity.this.current_frag).refreshList();
+                        if (InClassActivity.this.chat_frag != null) {
+                            InClassActivity.this.chat_frag.refreshList();
                         }
                     }
                 });
@@ -221,8 +235,8 @@ public class InClassActivity extends AppCompatActivity implements ChatRoomFragme
             //showProgress(false);
 
             if (ret.getErrorCode() == 0) {
-                if (InClassActivity.this.current_frag instanceof ChatRoomFragment){
-                    ((ChatRoomFragment) InClassActivity.this.current_frag).message.setText("");
+                if (InClassActivity.this.chat_frag != null){
+                    InClassActivity.this.chat_frag.message.setText("");
                 }
                 InClassActivity.this.mHandler.post(new refreshRunnable());
             } else {
