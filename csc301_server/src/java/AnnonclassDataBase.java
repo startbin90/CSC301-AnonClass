@@ -200,6 +200,7 @@ public class AnnonclassDataBase {
         while (re0.next()) {
             studentflag = re0.getBoolean(1);
             if (!studentflag) {
+                System.out.println("not a student");
                 return 1;
             }
         }
@@ -211,6 +212,7 @@ public class AnnonclassDataBase {
         ResultSet resultSet = exec1.executeQuery();
         if (isResultSetEmpty(resultSet)) {
             // no such course created yet.
+            System.out.println("no such course");
             return 1;
         } else {
             PreparedStatement exec2 = connection.prepareStatement("select * from dbschema.course_user " +
@@ -228,6 +230,7 @@ public class AnnonclassDataBase {
                 exec3.executeUpdate();
                 return 0;
             } else {
+                System.out.println("has enrolled");
                 // client has already enrolled
                 return 1;
             }
@@ -249,7 +252,7 @@ public class AnnonclassDataBase {
             user.put("lastname", res1.getString(4));
             user.put("studentFlag", res1.getBoolean(5));
         }
-        PreparedStatement exec2 = connection.prepareStatement("select course_name, course_code, " +
+        PreparedStatement exec2 = connection.prepareStatement("select course_section.id, course_name, course_code, " +
                         "section_number, instructor_email, instructor_name, time_created, locations " +
                         "from dbschema.course_user, " +
                         "dbschema.course_section " +
@@ -260,13 +263,14 @@ public class AnnonclassDataBase {
         ResultSet res2 = exec2.executeQuery();
         while (res2.next()) {
             JSONObject course = new JSONObject();
-            course.put("course_name", res2.getString(1));
-            course.put("course_code", res2.getString(2));
-            course.put("section_number", res2.getString(3));
-            course.put("instructor_email", res2.getString(4));
-            course.put("instructor_name", res2.getString(5));
-            course.put("time_created", res2.getDate(6));
-            course.put("location", res2.getString(7));
+            course.put("course_id", res2.getInt(1));
+            course.put("course_name", res2.getString(2));
+            course.put("course_code", res2.getString(3));
+            course.put("section_number", res2.getString(4));
+            course.put("instructor_email", res2.getString(5));
+            course.put("instructor_name", res2.getString(6));
+            course.put("time_created", res2.getDate(7));
+            course.put("location", res2.getString(8));
             courses.put(course);
         }
         user.put("courses", courses);
