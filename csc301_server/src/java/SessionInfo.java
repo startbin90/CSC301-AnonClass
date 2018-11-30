@@ -8,6 +8,7 @@ public class SessionInfo {
     private Tuple coordinate;
     private List<JSONObject> questions = new ArrayList<JSONObject>();
     private List<String> students = new ArrayList<String>();
+    private List<String> filenames = new ArrayList<String>();
     public SessionInfo(Tuple coordinate) {
         this.coordinate = coordinate;
     }
@@ -26,5 +27,13 @@ public class SessionInfo {
 
     public void joinSession(String email, Tuple location) {
         this.students.add(email);
+    }
+
+    public List<String> getFiles() {
+        return filenames;
+    }
+
+    public void addFile(String path) {
+        this.filenames.add(path);
     }
 }
