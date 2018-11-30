@@ -98,10 +98,6 @@ public class registerActivity extends AppCompatActivity {
                 cancel = true;
                 break;
         }
-
-
-
-
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailField.setError(getString(R.string.error_field_required));

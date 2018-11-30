@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,8 +52,6 @@ public class ClassStarterFragment extends BottomSheetDialogFragment implements O
     private Course course;
     private User user;
     private boolean isLocationSet = false;
-    private double latitude;
-    private double longitude;
     private Location location;
     private static String TAG = "ClassStarterFragment";
     private static String MAP_VIEW_BOUDLE_KEY = "mapViewBundleKey";
@@ -125,12 +124,10 @@ public class ClassStarterFragment extends BottomSheetDialogFragment implements O
             }
         };
 
-        Button location = view.findViewById(R.id.location);
+        ImageButton location = view.findViewById(R.id.location);
         location.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: attempt to get user's location and set latitude and longitude attributes
-
                 mLocationGetter myLocation = new mLocationGetter();
                 myLocation.getLocation(getContext(), locationResult);
 
@@ -265,7 +262,8 @@ public class ClassStarterFragment extends BottomSheetDialogFragment implements O
             return;
         }
 
-        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(), course.getCourse_id(), latitude, longitude));
+        mAttendClassTask = new attendClassTask(Session.requestSession(user.getEmail(),
+                course.getCourse_id(), location.getLatitude(), location.getLongitude()));
         mAttendClassTask.execute((Void) null);
     }
 
@@ -296,6 +294,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment implements O
                 launch.putExtra("user", user.serialize());
                 launch.putExtra("course", course.serialize());
                 ClassStarterFragment.this.startActivity(launch);
+                ClassStarterFragment.this.dismiss();
             } else {
                 Toast.makeText(ClassStarterFragment.this.getContext(),
                         "attend class failed", Toast.LENGTH_SHORT).show();
