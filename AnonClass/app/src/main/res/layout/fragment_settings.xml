@@ -33,5 +33,18 @@
         android:background="@color/dividerGrey">
 
     </Button>
+    <Button
+        android:id="@+id/logoff"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="5dp"
+        android:orientation="horizontal"
+        android:gravity=""
+        android:text="@string/logoff"
+        android:textSize="20sp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:background="@color/dividerGrey">
+
+    </Button>
 
 </LinearLayout>

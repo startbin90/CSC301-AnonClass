@@ -47,7 +47,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-    public static final int DEBUG = 1;
+    public static final int DEBUG = 0;
     /**
      * Id to identity READ_CONTACTS permission request.
      */

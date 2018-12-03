@@ -50,6 +50,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="room">Room</string>
     <string name="title_activity_get_location">Map</string>
-    <string name="modify_password">Modify Password</string>
-    <string name="drop_a_course">Drop a Course</string>
+    <string name="modify_password">Modify Password(Still under construction)</string>
+    <string name="drop_a_course">Drop a Course (Still under construction)</string>
+    <string name="logoff">Log off</string>
 </resources>

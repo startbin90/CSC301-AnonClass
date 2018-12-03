@@ -2,6 +2,7 @@ package edu.toronto.csc301.anonclass;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -261,12 +262,15 @@ public class AnonClassActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSettingsFragmentInteraction(Uri uri) {
+    public void onInstructorMessageListFragmentInteraction(instructorMessage message) {
 
     }
 
     @Override
-    public void onInstructorMessageListFragmentInteraction(instructorMessage message) {
+    public void onSettingsFragmentRequestLogOff() {
+        this.finish();
+        Intent launch = new Intent(AnonClassActivity.this, LoginActivity.class);
+        AnonClassActivity.this.startActivity(launch);
 
     }
 

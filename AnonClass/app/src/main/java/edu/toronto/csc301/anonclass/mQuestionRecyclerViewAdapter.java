@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Question;
+import edu.toronto.csc301.anonclass.util.User;
 
 /**
  * recyclerView adapter for ChatRoomFragment inside InClassActivity
@@ -18,17 +19,42 @@ import edu.toronto.csc301.anonclass.util.Question;
 public class mQuestionRecyclerViewAdapter extends RecyclerView.Adapter<mQuestionRecyclerViewAdapter.ViewHolder> {
     private final List<Question> mQuestions;
     private final ChatRoomFragment.OnChatRoomFragmentInteractionListener mEnrolledClassListener;
+    private final String userEmail;
+    private int SENDER = 1;
+    private int OTHER = 0;
 
-    public mQuestionRecyclerViewAdapter(List<Question> questions, ChatRoomFragment.OnChatRoomFragmentInteractionListener listener) {
+    public mQuestionRecyclerViewAdapter(String user, List<Question> questions, ChatRoomFragment.OnChatRoomFragmentInteractionListener listener) {
         mQuestions = questions;
         mEnrolledClassListener = listener;
+        this.userEmail = user;
     }
 
     @Override
     public mQuestionRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.message_style, parent, false);
-        return new mQuestionRecyclerViewAdapter.ViewHolder(view);
+        View view;
+        switch (viewType) {
+            case 0: // other
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.message_style, parent, false);
+                return new mQuestionRecyclerViewAdapter.ViewHolder(view);
+            case 1: // sender
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.sender_message_style, parent, false);
+                return new mQuestionRecyclerViewAdapter.ViewHolder(view);
+            default:
+                view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.message_style, parent, false);
+                return new mQuestionRecyclerViewAdapter.ViewHolder(view);
+        }
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (mQuestions.get(position).getEmail().equals(this.userEmail)){
+            return SENDER;
+        }
+        return OTHER;
     }
 
     @Override

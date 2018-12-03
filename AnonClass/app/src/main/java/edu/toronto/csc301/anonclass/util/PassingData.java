@@ -18,7 +18,7 @@ import java.util.HashMap;
 */
 public class PassingData {
 
-    private static final String host = "192.168.0.15";
+    private static final String host = "100.64.170.81";
     private static final int portNumber = 30000;
 
     private static Gson gson = new GsonBuilder().create();

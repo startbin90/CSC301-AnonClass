@@ -23,6 +23,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -57,6 +58,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment implements O
     private Location location;
     private static String TAG = "ClassStarterFragment";
     private static String MAP_VIEW_BOUDLE_KEY = "mapViewBundleKey";
+    private Circle addedCircle = null;
 
     private MapView mMapView;
     private GoogleMap map;
@@ -120,7 +122,11 @@ public class ClassStarterFragment extends BottomSheetDialogFragment implements O
                     circleOptions.strokeColor(R.color.dividerGrey);
                     circleOptions.fillColor(R.color.transBlue);
                     circleOptions.strokeWidth(2);
-                    map.addCircle(circleOptions);
+                    if (addedCircle != null){
+                        addedCircle.remove();
+                    }
+                    addedCircle = map.addCircle(circleOptions);
+
                 }
                 Log.d(TAG, String.format("lat: %.2f; long: %.2f", location.getLatitude(), location.getLongitude()));
             }

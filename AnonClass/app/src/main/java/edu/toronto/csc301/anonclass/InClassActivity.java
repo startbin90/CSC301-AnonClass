@@ -131,6 +131,11 @@ public class InClassActivity extends AppCompatActivity
         return questions;
     }
 
+    @Override
+    public String getUserEmail() {
+        return user.getEmail();
+    }
+
 
     @Override
     public void onListFragmentInteraction(FileItem file) {

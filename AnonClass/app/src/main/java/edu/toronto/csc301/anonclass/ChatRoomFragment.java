@@ -46,7 +46,7 @@ public class ChatRoomFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) found;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            adapter = new mQuestionRecyclerViewAdapter(mListener.requestQuestions(), mListener);
+            adapter = new mQuestionRecyclerViewAdapter(mListener.getUserEmail(), mListener.requestQuestions(), mListener);
             recyclerView.setAdapter(adapter);
 
         }
@@ -92,5 +92,6 @@ public class ChatRoomFragment extends Fragment {
     public interface OnChatRoomFragmentInteractionListener {
         void onSendClicked(String question);
         List<Question> requestQuestions();
+        String getUserEmail();
     }
 }
