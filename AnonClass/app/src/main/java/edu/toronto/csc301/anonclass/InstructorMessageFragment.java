@@ -10,31 +10,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.toronto.csc301.anonclass.dummy.DummyContent;
-import edu.toronto.csc301.anonclass.dummy.DummyContent.DummyItem;
-import edu.toronto.csc301.anonclass.util.FileItem;
+import edu.toronto.csc301.anonclass.util.instructorMessage;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnFileFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnInstructorMessageListFragmentInteractionListener}
  * interface.
  */
-public class FileFragment extends Fragment {
+public class InstructorMessageFragment extends Fragment {
 
+    // TODO: Customize parameters
     private int mColumnCount = 1;
 
-    private OnFileFragmentInteractionListener mListener;
+    private OnInstructorMessageListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public FileFragment() {
+    public InstructorMessageFragment() {
     }
 
     @Override
@@ -46,7 +41,7 @@ public class FileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_file_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_instructormessage_list, container, false);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -57,10 +52,7 @@ public class FileFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            List<FileItem> files = new ArrayList<>();
-            files.add(new FileItem("csc301", "https://csc301-fall-2018.github.io"));
-            files.add(new FileItem("file2", "https://www.baidu.com"));
-            recyclerView.setAdapter(new mFileRecyclerViewAdapter(files, mListener));
+            recyclerView.setAdapter(new mInstructorMessageRecyclerViewAdapter(instructorMessage.getDummyMessages(), mListener));
         }
         return view;
     }
@@ -69,11 +61,11 @@ public class FileFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFileFragmentInteractionListener) {
-            mListener = (OnFileFragmentInteractionListener) context;
+        if (context instanceof OnInstructorMessageListFragmentInteractionListener) {
+            mListener = (OnInstructorMessageListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFileFragmentInteractionListener");
+                    + " must implement OnInstructorMessageListFragmentInteractionListener");
         }
     }
 
@@ -93,8 +85,8 @@ public class FileFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFileFragmentInteractionListener {
+    public interface OnInstructorMessageListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(FileItem file);
+        void onInstructorMessageListFragmentInteraction(instructorMessage message);
     }
 }

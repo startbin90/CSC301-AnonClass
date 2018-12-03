@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -29,13 +30,16 @@ import java.util.List;
 import edu.toronto.csc301.anonclass.util.Course;
 import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.User;
+import edu.toronto.csc301.anonclass.util.instructorMessage;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
 public class AnonClassActivity extends AppCompatActivity
         implements EnrolledClassFragment.OnListFragmentInteractionListener,
         CreateClassFragment.OnFragmentInteractionListener,
         JoinClassFragment.OnFragmentInteractionListener,
-        ClassStarterFragment.OnClassStarterFragmentInteractionListener {
+        ClassStarterFragment.OnClassStarterFragmentInteractionListener,
+        SettingsFragment.OnSettingsFragmentInteractionListener,
+        InstructorMessageFragment.OnInstructorMessageListFragmentInteractionListener {
 
     /**
      * current fragment loaded
@@ -71,10 +75,10 @@ public class AnonClassActivity extends AppCompatActivity
                 current_fragment = EnrolledClassFragment.newInstance(this);
                 break;
             case R.id.navigation_dashboard:
-                current_fragment = null;
+                current_fragment = new SettingsFragment();
                 break;
             case R.id.navigation_notifications:
-                current_fragment = null;
+                current_fragment = new InstructorMessageFragment();
                 break;
 
         }
@@ -102,7 +106,7 @@ public class AnonClassActivity extends AppCompatActivity
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         displaySelectedScreen(R.id.navigation_home);
-        navigation.getMenu().getItem(0).setChecked(true);
+        navigation.getMenu().getItem(1).setChecked(true);
 
         String[] permissions = {android.Manifest.permission.ACCESS_FINE_LOCATION,
                 android.Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -239,6 +243,16 @@ public class AnonClassActivity extends AppCompatActivity
                 }
             });
         }
+
+    }
+
+    @Override
+    public void onSettingsFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onInstructorMessageListFragmentInteraction(instructorMessage message) {
 
     }
 
