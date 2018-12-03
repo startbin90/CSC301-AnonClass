@@ -20,7 +20,6 @@ import edu.toronto.csc301.anonclass.util.instructorMessage;
  */
 public class InstructorMessageFragment extends Fragment {
 
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
     private OnInstructorMessageListFragmentInteractionListener mListener;
@@ -86,7 +85,6 @@ public class InstructorMessageFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnInstructorMessageListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onInstructorMessageListFragmentInteraction(instructorMessage message);
     }
 }

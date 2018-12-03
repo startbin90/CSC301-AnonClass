@@ -1,16 +1,13 @@
 package edu.toronto.csc301.anonclass;
-import android.Manifest;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
-
 import android.support.design.widget.CoordinatorLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +25,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import edu.toronto.csc301.anonclass.util.Course;
 import edu.toronto.csc301.anonclass.util.PassingData;
@@ -38,6 +34,12 @@ import edu.toronto.csc301.anonclass.util.mLocationGetter;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
 /**
+ * a BottomSheetDialogFragment
+ * pops from the bottom of the screen but set to take the entire screen
+ *
+ * contains an AsyncTask attendClassTask to send request to server to join a lecture/session
+ *
+ * This fragment contains a Google Map which may request the location permission from the user
  *
  */
 public class ClassStarterFragment extends BottomSheetDialogFragment implements OnMapReadyCallback {
@@ -277,7 +279,7 @@ public class ClassStarterFragment extends BottomSheetDialogFragment implements O
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to request join or open a class, expect a session number
+            // attempt to request join or open a class, expect a session number
 
             if (LoginActivity.DEBUG == 1){
                 return retMsg.getErrorRet(0);

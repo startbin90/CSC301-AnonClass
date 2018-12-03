@@ -17,7 +17,9 @@ import java.util.List;
 import edu.toronto.csc301.anonclass.util.Question;
 
 /**
+ * Fragment inside InClassActivity which contains a RecyclerView displaying students questions
  *
+ * request and click events are passed to InClassActivity through interface callback
  */
 public class ChatRoomFragment extends Fragment {
 

@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
@@ -33,6 +32,22 @@ import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.instructorMessage;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
+/**
+ * LoginActivity -> this
+ *
+ * There are six fragments communicating back with this
+ * parent activity through interface callback
+ *
+ * This activity has three child fragments:
+ * 1. EnrolledClassFragment
+ * 2. SettingsFragment
+ * 3. InstructorMessageFragment
+ *
+ * Also contains two AsyncTask sub class
+ * 1. JoinClassTask used to join/enroll a new course
+ * 2. GetEnrolledClassTask used to retrieve student's enrolled class list
+ *
+ */
 public class AnonClassActivity extends AppCompatActivity
         implements EnrolledClassFragment.OnListFragmentInteractionListener,
         CreateClassFragment.OnFragmentInteractionListener,
@@ -226,7 +241,6 @@ public class AnonClassActivity extends AppCompatActivity
     public void onGetLocationFromClassStarterFrag() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
@@ -272,7 +286,7 @@ public class AnonClassActivity extends AppCompatActivity
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: mEmail attempt to request join course_id, expect success or fail
+            // mEmail attempt to request join course_id, expect success or fail
             if (LoginActivity.DEBUG == 1){
                 return retMsg.getErrorRet(0);
             }
@@ -311,7 +325,7 @@ public class AnonClassActivity extends AppCompatActivity
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to get enrolled courses, expect to get a retMsg with error code and
+            //       attempt to get enrolled courses, expect to get a retMsg with error code and
             //       user obj, this is similar to what was done in login process.
             //       we update the user object all together here
 

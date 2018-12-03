@@ -10,6 +10,11 @@ import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Question;
 
+/**
+ * recyclerView adapter for ChatRoomFragment inside InClassActivity
+ *
+ * displays a set of questions
+ */
 public class mQuestionRecyclerViewAdapter extends RecyclerView.Adapter<mQuestionRecyclerViewAdapter.ViewHolder> {
     private final List<Question> mQuestions;
     private final ChatRoomFragment.OnChatRoomFragmentInteractionListener mEnrolledClassListener;

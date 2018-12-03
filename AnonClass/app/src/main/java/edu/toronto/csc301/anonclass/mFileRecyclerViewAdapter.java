@@ -7,14 +7,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.List;
+
 import edu.toronto.csc301.anonclass.dummy.DummyContent.DummyItem;
 import edu.toronto.csc301.anonclass.util.FileItem;
 
-import java.util.List;
-
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
- * specified {@link FileFragment.OnFileFragmentInteractionListener}.
+ * recyclerView adapter for FileFragment inside InClassActivity
  *
  */
 public class mFileRecyclerViewAdapter extends RecyclerView.Adapter<mFileRecyclerViewAdapter.ViewHolder> {

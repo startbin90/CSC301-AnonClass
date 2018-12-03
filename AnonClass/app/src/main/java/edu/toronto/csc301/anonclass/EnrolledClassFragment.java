@@ -20,8 +20,12 @@ import java.util.List;
 import edu.toronto.csc301.anonclass.util.Course;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
+ * Fragment inside AnonClassActivity
+ * Fragment used to display all enrolled courses of a student
+ *
+ * Fragment requests service/onClickEvent mainly through interface callback to send request to
+ * AnonClass to process for itself
+ *
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */

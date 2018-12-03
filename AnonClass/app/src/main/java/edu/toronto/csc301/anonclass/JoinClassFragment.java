@@ -25,7 +25,11 @@ import edu.toronto.csc301.anonclass.util.retMsg;
 
 
 /**
- * to handle interaction events.
+ * a bottomSheetDialogFragment pops up from the bottom of the screen when the user clicks the
+ * "Enroll" button in the home tab
+ *
+ * contains searchClassTask AsyncTask request a set of related course based on what the user has
+ * typed
  */
 public class JoinClassFragment extends BottomSheetDialogFragment {
 
@@ -158,7 +162,7 @@ public class JoinClassFragment extends BottomSheetDialogFragment {
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: takes a search string and send it to server
+            //       takes a search string and send it to server
             //       server returns a retMsg obj which gives an error code and list of courses
             //       related to the search string
 

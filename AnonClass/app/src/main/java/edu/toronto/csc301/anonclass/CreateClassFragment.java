@@ -160,7 +160,7 @@ public class CreateClassFragment extends BottomSheetDialogFragment {
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt to request to create a class.
+            // attempt to request to create a class.
 
             try {
                 // Simulate network access.

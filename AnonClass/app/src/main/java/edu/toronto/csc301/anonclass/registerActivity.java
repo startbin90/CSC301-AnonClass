@@ -15,11 +15,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import edu.toronto.csc301.anonclass.util.PassingData;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
-import edu.toronto.csc301.anonclass.util.PassingData;
 
-
+/**
+ * activity used in user register
+ * launch from LoginActivity
+ * activity closed on register successful
+ *
+ * contains UserRegisterTask used to request a new registration
+ *
+ */
 public class registerActivity extends AppCompatActivity {
 
     private View mProgressView;
@@ -160,12 +167,10 @@ public class registerActivity extends AppCompatActivity {
         }
     }
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
     /**
@@ -219,7 +224,6 @@ public class registerActivity extends AppCompatActivity {
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
             System.out.println("m user" + mUser.serialize());
 

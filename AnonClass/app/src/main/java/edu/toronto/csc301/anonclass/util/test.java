@@ -1,13 +1,5 @@
 package edu.toronto.csc301.anonclass.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-
 public class test {
     public static void main(String[] args) {
         User user = new User.RegisterUserBuilder().email("csc301212@test.com").pwd("1234564").

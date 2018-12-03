@@ -30,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.toronto.csc301.anonclass.util.Course;
@@ -42,6 +41,9 @@ import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
+ *
+ * this -> registerActivity
+ * this -> LoginActivity
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
@@ -207,12 +209,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -320,9 +320,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected retMsg doInBackground(Void... params) {
-            // TODO: takes a User obj and return retMsg obj which contains the error code and
+            //       takes a User obj and return retMsg obj which contains the error code and
             //       user obj, using getUserRet() to get such a obj
-            // TODO: server has to know where the request is from
+            //       server has to know where the request is from
             //       if it's from mobile client, teacher login will be rejected even if
             //       correct email and password combination
 

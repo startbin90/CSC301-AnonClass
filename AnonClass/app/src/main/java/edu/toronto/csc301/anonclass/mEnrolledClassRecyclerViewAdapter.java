@@ -12,7 +12,7 @@ import edu.toronto.csc301.anonclass.EnrolledClassFragment.OnListFragmentInteract
 import edu.toronto.csc301.anonclass.util.Course;
 
 /**
-
+ * recyclerView adapter for EnrolledClassFragment
  */
 public class mEnrolledClassRecyclerViewAdapter extends RecyclerView.Adapter<mEnrolledClassRecyclerViewAdapter.ViewHolder> {
 

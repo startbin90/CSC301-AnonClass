@@ -10,17 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.toronto.csc301.anonclass.dummy.DummyContent;
-import edu.toronto.csc301.anonclass.dummy.DummyContent.DummyItem;
 import edu.toronto.csc301.anonclass.util.FileItem;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
+ * A fragment inside InClassActivity displaying all the files/links teachers shared
  * Activities containing this fragment MUST implement the {@link OnFileFragmentInteractionListener}
  * interface.
  */
@@ -94,7 +90,6 @@ public class FileFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFileFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(FileItem file);
     }
 }

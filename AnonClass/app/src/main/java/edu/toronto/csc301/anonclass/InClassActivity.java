@@ -18,12 +18,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import edu.toronto.csc301.anonclass.dummy.DummyContent;
 import edu.toronto.csc301.anonclass.util.Course;
 import edu.toronto.csc301.anonclass.util.FileItem;
 import edu.toronto.csc301.anonclass.util.PassingData;
@@ -31,6 +29,18 @@ import edu.toronto.csc301.anonclass.util.Question;
 import edu.toronto.csc301.anonclass.util.User;
 import edu.toronto.csc301.anonclass.util.retMsg;
 
+/**
+ * AnonClassActivity->ClassStarterFragment->this
+ *
+ * This activity contains two children fragments
+ * 1. ChatRoomFragment
+ * 2. FileFragment
+ *
+ * Contains SendQuestion AsyncTask used to send a new question to server
+ *
+ * This Activity calls startHandlerThread() onCreate which starts to refresh the question set
+ * periodically.
+ */
 public class InClassActivity extends AppCompatActivity
         implements ChatRoomFragment.OnChatRoomFragmentInteractionListener,
                     FileFragment.OnFileFragmentInteractionListener{

@@ -31,7 +31,7 @@ public class SettingsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onSettingsFragmentInteraction(uri);
@@ -66,7 +66,6 @@ public class SettingsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnSettingsFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onSettingsFragmentInteraction(Uri uri);
     }
 }
