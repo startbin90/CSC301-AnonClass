@@ -1,10 +1,13 @@
 package edu.toronto.csc301.anonclass.util;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,25 +16,30 @@ public class mLocationGetter {
     Timer timer1;
     LocationManager lm;
     LocationResult locationResult;
-    boolean gps_enabled=false;
-    boolean network_enabled=false;
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
 
-    public boolean getLocation(Context context, LocationResult result)
-    {
+    public boolean getLocation(Context context, LocationResult result) {
         //I use LocationResult callback class to pass location value from MyLocation to user code.
-        locationResult=result;
-        if(lm==null)
+        locationResult = result;
+        if (lm == null)
             lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         //exceptions will be thrown if provider is not permitted.
-        try{gps_enabled=lm.isProviderEnabled(LocationManager.GPS_PROVIDER);}catch(Exception ex){}
-        try{network_enabled=lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);}catch(Exception ex){}
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
 
         //don't start listeners if no provider is enabled
-        if(!gps_enabled && !network_enabled)
+        if (!gps_enabled && !network_enabled)
             return false;
 
-        if(gps_enabled)
+        if (gps_enabled)
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListenerGps);
         if(network_enabled)
             lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListenerNetwork);

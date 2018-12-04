@@ -220,7 +220,7 @@ public class InClassActivity extends AppCompatActivity
             }else {
                 Log.i(TAG, "get question failed");
             }
-            mHandler.postDelayed(this, 10000);
+            mHandler.postDelayed(this, 1000);
         }
     }
     /**
